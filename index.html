@@ -1,7 +1,230 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+
+    <style>
+        canvas {
+            box-shadow: inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+        }
+
+        textarea {
+            font-family: "Lucida Console", "DejaVu Sans Mono", monospace;
+            font-weight: bold;
+            resize: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: #fff;
+            border-radius: 0;
+            box-shadow: inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf, inset 2px 2px #0a0a0a;
+            box-sizing: border-box;
+            padding: 3px 4px;
+            line-height: 1.25;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+    <h1>Hello World</h1>
+    <p>I'm hosted with GitHub Pages.</p>
+    <center>
+        <div style="display: flex; justify-content: space-evenly;flex-wrap: wrap;">
+            <canvas style="background-color:#eee;" id="canvas" height=500 width=500></canvas>
+            <div>
+                <pre>Pozycje punktów kostki</pre>
+                <textarea id="Pvalue" rows=8 cols="34" readonly></textarea>
+                <pre>Macierz rotacji 3d</pre>
+                <textarea id="Mvalue" rows=3 cols="34" readonly></textarea>
+                <pre>Kwaternion (w,x,y,z)</pre>
+                <textarea id="Qvalue" rows=1 cols="34" readonly></textarea>
+                <pre>Wektor wejściowy</pre>
+                <textarea id="Vvalue" rows=1 cols="34" readonly></textarea>
+                <pre>Wektor znormalizowany</pre>
+                <textarea id="Nvalue" rows=1 cols="34" readonly></textarea>
+            </div>
+
+        </div>
+        <button id="step">Krok</button>
+    </center>
+
+    <p id="Xvalue"></p>
+    <p id="Cvalue"></p>
+    <script>
+        "use strict";
+        var wektor3 = function (x, y, z) {
+            this.x = parseFloat(x);
+            this.y = parseFloat(y);
+            this.z = parseFloat(z);
+            wektor3.prototype.toString = function () {
+                return `${this.x.toFixed(5).padStart(10, ' ')},${this.y.toFixed(5).padStart(10, ' ')},${this.z.toFixed(5).padStart(10, ' ')}`;
+            };
+            function tablica() {
+                return [this.x, this.y, this.z];
+            }
+        }
+        var quaternion = function (w, x, y, z) {
+            this.w = parseFloat(w);
+            this.x = parseFloat(x);
+            this.y = parseFloat(y);
+            this.z = parseFloat(z);
+            quaternion.prototype.toString = function () {
+                return `${w.toFixed(5).padStart(8, ' ')},${x.toFixed(5).padStart(8, ' ')},${y.toFixed(5).padStart(8, ' ')},${z.toFixed(5).padStart(8, ' ')}`;
+            }
+        }
+        var sześcian = function (pozycja, krawędź) {
+            let d = krawędź / 2;
+            this.punkty = [
+                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z - d),
+                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z - d),
+                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z - d),
+                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z - d),
+                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z + d),
+                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z + d),
+                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z + d),
+                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z + d)];
+            //this.punkty = structuredClone(this.orgPunkty);
+            this.sciany = [
+                [this.punkty[0], this.punkty[1], this.punkty[2], this.punkty[3]],
+                [this.punkty[4], this.punkty[5], this.punkty[6], this.punkty[7]],
+                [this.punkty[0], this.punkty[1], this.punkty[5], this.punkty[4]],
+                [this.punkty[1], this.punkty[2], this.punkty[6], this.punkty[5]],
+                [this.punkty[2], this.punkty[3], this.punkty[7], this.punkty[6]],
+                [this.punkty[3], this.punkty[0], this.punkty[4], this.punkty[7]]
+            ];
+
+        }
+        function translacja(w) {
+            return new wektor3(w.x, w.y, 0);
+        }
+        function render(obiekt, ctx, dx, dy, c) {
+            var a = c / obiekty[0].sciany.length;
+            for (var i = 0, lobiekty = obiekty.length; i < /*Math.min(lobiekty, a)*/ lobiekty; i++) {
+                for (var j = 0, lsciany = obiekty[i].sciany.length; j < /*Math.min(lsciany, c % i + 1)*/lsciany; j++) {
+                    var sciana = obiekty[i].sciany[j];
+                    var t = translacja(sciana[0]);
+                    ctx.beginPath();
+                    ctx.moveTo(t.x + dx, t.y + dy);
+                    for (var k = 1, lpunkt = sciana.length; k < lpunkt; ++k) {
+                        //sleep(50);
+                        t = translacja(sciana[k]);
+                        ctx.lineTo(t.x + dx, t.y + dy);
+                    }
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill();
+                    //var fgfgf = `rgba(${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(1, 10) / 10})`;
+                    //ctx.fillStyle = fgfgf;
+                }
+            }
+        }
+        function getRndInteger(min, max) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+        function RotacjaQ(obiekt, AngDeg, v3) {
+            const initialQ = new quaternion(1, 0, 0, 0);
+            var rotationalQ = AVdoQ(AngDeg * Math.PI / 180, v3);
+            Qvalue.innerHTML = rotationalQ;
+            var rotationalM = MacierzRotacyjna(MnożenieQ(initialQ, rotationalQ));
+            for (let i = 0; i < obiekt.punkty.length; i++) {
+                obiekt.punkty[i] = MnożenieMV(rotationalM, obiekt.punkty[i]);
+            }
+            Pvalue.innerHTML = FormatText(obiekt.punkty);
+        }
+        function AVdoQ(AngRad, v3) {
+            var w = Math.cos(AngRad / 2);
+            var s = Math.sin(AngRad / 2);
+            return new quaternion(w, v3.x * s, v3.y * s, v3.z * s);
+        }
+        function MnożenieMV(macierz3x3, wektor3) {
+            let x = wektor3.x * 1, y = wektor3.y * 1, z = wektor3.z * 1;
+            wektor3.x = macierz3x3[0][0] * x + macierz3x3[0][1] * y + macierz3x3[0][2] * z;
+            wektor3.y = macierz3x3[1][0] * x + macierz3x3[1][1] * y + macierz3x3[1][2] * z;
+            wektor3.z = macierz3x3[2][0] * x + macierz3x3[2][1] * y + macierz3x3[2][2] * z;
+            return wektor3;
+        }
+        function MnożenieQ(q1, q2) {
+            return new quaternion(
+                (q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z),
+                (q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y),
+                (q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x),
+                (q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w)
+            );
+        }
+        function FormatText(v) {
+            let out = "";
+            for (let i = 0; i < v.length; i++) {
+                if (v[i] !== Object(v[i])) {
+                    out += `${v[i].toFixed(5).padStart(10, ' ')}${i >= v.length - 1 ? '' : ','}`;
+                }
+                else {
+                    out += `${v[i].toString()}${i >= v.length - 1 ? '' : '\n'}`;
+                }
+            }
+            return out;
+        }
+        function MacierzRotacyjna(q) {
+            var x = [2 * (.5 - q.y * q.y - q.z * q.z), 2 * (q.x * q.y - q.w * q.z), 2 * (q.x * q.z + q.w * q.y)];
+            var y = [2 * (q.x * q.y + q.w * q.z), 2 * (.5 - q.x * q.x - q.z * q.z), 2 * (q.y * q.z - q.w * q.x)];
+            var z = [2 * (q.x * q.z - q.w * q.y), 2 * (q.y * q.z + q.w * q.x), 2 * (.5 - q.x * q.x - q.y * q.y)];
+            Mvalue.innerHTML = `${FormatText(x)}\n${FormatText(y)}\n${FormatText(z)}`;
+            return [x, y, z];
+        }
+        function normalizacja(q) {
+            const ep1 = 1.001, ep2 = 0.999;
+            var maW = Object.hasOwn(q, 'w');
+            var odległość = q.x * q.x + q.y * q.y + q.z * q.z;
+            const qN = maW ? new quaternion() : new wektor3();
+            if (maW) { odległość += q.w * q.w }
+            if (odległość > ep1 || odległość < ep2) {
+                odległość = Math.sqrt(odległość);
+                if (maW) { qN.w = q.w / odległość; }
+                qN.x = q.x / odległość;
+                qN.y = q.y / odległość;
+                qN.z = q.z / odległość;
+            }
+            Nvalue.innerHTML = qN;
+            return qN;
+        }
+
+        //inicjalizacja
+        const Mvalue = document.getElementById("Mvalue"),
+            Pvalue = document.getElementById("Pvalue"),
+            Qvalue = document.getElementById("Qvalue"),
+            Vvalue = document.getElementById("Vvalue"),
+            Nvalue = document.getElementById("Nvalue"),
+            stepBt = document.getElementById("step"),
+            ctx = document.getElementById('canvas').getContext("2d");
+        ctx.strokeStyle = '#abb';
+        ctx.fillStyle = 'rgba(127,127,127,0.1)';
+        const skala = 100, dx = 250, dy = 250;
+        var obiekty = [];
+        obiekty.push(new sześcian(new wektor3(0, 0, 0), skala));
+        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 1, 1), vNm = normalizacja(vIn);
+        Vvalue.innerHTML = vIn;
+        Nvalue.innerHTML = vNm;
+        stepBt.addEventListener("click", function () { window.requestAnimationFrame(Main); });
+        render(obiekty, ctx, dx, dy, c);
+
+
+        //main
+        function Main() {
+            obiekty.forEach(element => {
+                RotacjaQ(element, 1, normalizacja(vIn));
+            });
+            ctx.clearRect(0, 0, 500, 500);
+            render(obiekty, ctx, dx, dy, c);
+            /*x = (x + (Math.PI / 180)) % (2 * Math.PI);
+            y = (y + (Math.PI / 180) / 2) % (4 * Math.PI);
+            c += 0.1;
+            c = c % 200;
+            document.getElementById("Xvalue").innerHTML = x;
+            document.getElementById("Cvalue").innerHTML = c;*/
+            window.requestAnimationFrame(Main);
+        }
+    </script>
+
 </body>
+
 </html>
