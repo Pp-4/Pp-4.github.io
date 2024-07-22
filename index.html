@@ -33,22 +33,36 @@
         <div style="display: flex; justify-content: space-evenly;flex-wrap: wrap;">
             <canvas style="background-color:#eee;" id="canvas" height=500 width=500></canvas>
             <div>
-                <pre>Pozycje punktów kostki</pre>
-                <textarea id="Pvalue" rows=8 cols="34" readonly></textarea>
-                <pre>Macierz rotacji 3d</pre>
-                <textarea id="Mvalue" rows=3 cols="34" readonly></textarea>
-                <pre>Kwaternion (w,x,y,z)</pre>
-                <textarea id="Qvalue" rows=1 cols="34" readonly></textarea>
-                <pre>Wektor wejściowy</pre>
-                <textarea id="Vvalue" rows=1 cols="34" readonly></textarea>
+                <pre>Wektor wejściowy (x,y,z,theta)</pre>
+                <textarea id="Vvalue" rows=1 cols="35" readonly></textarea><textarea id="Tvalue" rows=1 cols="2" readonly></textarea>
                 <pre>Wektor znormalizowany</pre>
                 <textarea id="Nvalue" rows=1 cols="34" readonly></textarea>
+                <pre>Kwaternion (w,x,y,z)</pre>
+                <textarea id="Qvalue" rows=1 cols="34" readonly></textarea>
+                <pre>Macierz rotacji 3d</pre>
+                <textarea id="Mvalue" rows=3 cols="34" readonly></textarea>
+                <pre>Pozycje punktów środkowej kostki</pre>
+                <textarea id="Pvalue" rows=8 cols="34" readonly></textarea>
             </div>
-
         </div>
         <button id="step">Krok</button>
-    </center>
 
+<div>
+    <button id="b1" onclick="vIn = new wektor3(1, -1, 0)">|\</button>
+    <button id="b2" onclick="vIn = new wektor3(1, 0, 0)">/\</button>
+    <button id="b3" onclick="vIn = new wektor3(1, 1, 0)">/|</button><br>
+    <button id="b4" onclick="vIn = new wektor3(0, -1, 0)">&lt;</button>
+    <button id="b5" onclick="thetaDeg = thetaDeg > 0 ? 0 : 0.5">=</button>
+    <button id="b6" onclick="vIn = new wektor3(0, 1, 0)">&gt;</button><br>
+    <button id="b7" onclick="vIn = new wektor3(-1, -1, 0)">|/</button>
+    <button id="b8" onclick="vIn = new wektor3(-1, 0, 0)">\/</button>
+    <button id="b9" onclick="vIn = new wektor3(-1, 1, 0)">\|</button>
+</div>
+<div>
+    <button id="b10" onclick="vIn = new wektor3(0, 0, 1)">)</button>
+    <button id="b11" onclick="vIn = new wektor3(0, 0, -1)">(</button>
+</div>
+</center>
     <p id="Xvalue"></p>
     <p id="Cvalue"></p>
     <script>
@@ -184,6 +198,12 @@
                 qN.y = q.y / odległość;
                 qN.z = q.z / odległość;
             }
+            else {
+                if (maW) { qN.w = q.w;}
+                qN.x = q.x;
+                qN.y = q.y;
+                qN.z = q.z;
+            }
             Nvalue.innerHTML = qN;
             return qN;
         }
@@ -194,24 +214,42 @@
             Qvalue = document.getElementById("Qvalue"),
             Vvalue = document.getElementById("Vvalue"),
             Nvalue = document.getElementById("Nvalue"),
+            Tvalue = document.getElementById("Tvalue"),
             stepBt = document.getElementById("step"),
             ctx = document.getElementById('canvas').getContext("2d");
         ctx.strokeStyle = '#abb';
         ctx.fillStyle = 'rgba(127,127,127,0.1)';
-        const skala = 100, dx = 250, dy = 250;
-        var obiekty = [];
-        obiekty.push(new sześcian(new wektor3(0, 0, 0), skala));
-        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 1, 1), vNm = normalizacja(vIn);
-        Vvalue.innerHTML = vIn;
-        Nvalue.innerHTML = vNm;
+        const skala = 50, dx = 250, dy = 250;
+        var obiekty = [
+            new sześcian(new wektor3(-3*skala, -skala, 0), skala),
+            new sześcian(new wektor3(-3*skala, 0, 0), skala),
+            new sześcian(new wektor3(-3*skala, skala, 0), skala),
+            new sześcian(new wektor3(-2*skala, 2*skala, 0), skala),
+            new sześcian(new wektor3(-skala, 3*skala, 0), skala),
+            new sześcian(new wektor3(0, 3*skala, 0), skala),
+            new sześcian(new wektor3(skala, 3*skala, 0), skala),
+            new sześcian(new wektor3(2*skala, 2*skala, 0), skala),
+            new sześcian(new wektor3(3*skala, 0, 0), skala),
+            new sześcian(new wektor3(3*skala, skala, 0), skala),
+            new sześcian(new wektor3(3*skala, -skala, 0), skala),
+            new sześcian(new wektor3(-2*skala, -2*skala, 0), skala),
+            new sześcian(new wektor3(2*skala, -2*skala, 0), skala),
+            new sześcian(new wektor3(-skala, -3*skala, 0), skala),
+            new sześcian(new wektor3(0, -3*skala, 0), skala),
+            new sześcian(new wektor3(skala, -3*skala, 0), skala),
+        ];
+        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 0, 1), vNm = normalizacja(vIn),thetaDeg = 0.5;
         stepBt.addEventListener("click", function () { window.requestAnimationFrame(Main); });
         render(obiekty, ctx, dx, dy, c);
 
 
         //main
         function Main() {
+            Vvalue.innerHTML = vIn;
+            Tvalue.innerHTML = thetaDeg;
+            Nvalue.innerHTML = vNm;
             obiekty.forEach(element => {
-                RotacjaQ(element, 1, normalizacja(vIn));
+                RotacjaQ(element, thetaDeg, normalizacja(vIn));
             });
             ctx.clearRect(0, 0, 500, 500);
             render(obiekty, ctx, dx, dy, c);
