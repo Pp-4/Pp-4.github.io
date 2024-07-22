@@ -31,38 +31,41 @@
     <p>I'm hosted with GitHub Pages.</p>
     <center>
         <div style="display: flex; justify-content: space-evenly;flex-wrap: wrap;">
-            <canvas style="background-color:#eee; height: 500px; width: 500px;" id="canvas" width="500" height="500"></canvas>
+            <canvas style="background-color:#eee; height: 500px; width: 500px;" id="canvas" width="500"
+                height="500"></canvas>
             <div>
                 <pre>Wektor wejściowy (x,y,z,theta)</pre>
-                <textarea id="Vvalue" rows=1 cols="35" readonly></textarea><textarea id="Tvalue" rows=1 cols="2" readonly></textarea>
+                <textarea id="Vvalue" rows=1 cols="30" readonly></textarea><textarea id="Tvalue" rows=1 cols="2"
+                    readonly></textarea>
                 <pre>Wektor znormalizowany</pre>
-                <textarea id="Nvalue" rows=1 cols="34" readonly></textarea>
+                <textarea id="Nvalue" rows=1 cols="35" readonly></textarea>
                 <pre>Kwaternion (w,x,y,z)</pre>
-                <textarea id="Qvalue" rows=1 cols="34" readonly></textarea>
+                <textarea id="Qvalue" rows=1 cols="35" readonly></textarea>
                 <pre>Macierz rotacji 3d</pre>
-                <textarea id="Mvalue" rows=3 cols="34" readonly></textarea>
+                <textarea id="Mvalue" rows=3 cols="35" readonly></textarea>
                 <pre>Pozycje punktów środkowej kostki</pre>
-                <textarea id="Pvalue" rows=8 cols="34" readonly></textarea>
+                <textarea id="Pvalue" rows=8 cols="35" readonly></textarea>
             </div>
         </div>
         <button id="step">Krok</button>
 
-<div>
-    <button id="b1" onclick="vIn = new wektor3(1, -1, 0)">|\</button>
-    <button id="b2" onclick="vIn = new wektor3(1, 0, 0)">/\</button>
-    <button id="b3" onclick="vIn = new wektor3(1, 1, 0)">/|</button><br>
-    <button id="b4" onclick="vIn = new wektor3(0, -1, 0)">&lt;</button>
-    <button id="b5" onclick="thetaDeg = thetaDeg > 0 ? 0 : 0.5">=</button>
-    <button id="b6" onclick="vIn = new wektor3(0, 1, 0)">&gt;</button><br>
-    <button id="b7" onclick="vIn = new wektor3(-1, -1, 0)">|/</button>
-    <button id="b8" onclick="vIn = new wektor3(-1, 0, 0)">\/</button>
-    <button id="b9" onclick="vIn = new wektor3(-1, 1, 0)">\|</button>
-</div>
-<div>
-    <button id="b10" onclick="vIn = new wektor3(0, 0, 1)">)</button>
-    <button id="b11" onclick="vIn = new wektor3(0, 0, -1)">(</button>
-</div>
-</center>
+        <div>
+            <button id="b1" onclick="vIn = new wektor3(1, -1, 0)">|\</button>
+            <button id="b2" onclick="vIn = new wektor3(1, 0, 0)">/\</button>
+            <button id="b3" onclick="vIn = new wektor3(1, 1, 0)">/|</button><br>
+            <button id="b4" onclick="vIn = new wektor3(0, -1, 0)">&lt;</button>
+            <button id="b5" onclick="thetaDeg = thetaDeg > 0 ? 0 : 0.5">=</button>
+            <button id="b6" onclick="vIn = new wektor3(0, 1, 0)">&gt;</button><br>
+            <button id="b7" onclick="vIn = new wektor3(-1, -1, 0)">|/</button>
+            <button id="b8" onclick="vIn = new wektor3(-1, 0, 0)">\/</button>
+            <button id="b9" onclick="vIn = new wektor3(-1, 1, 0)">\|</button>
+        </div>
+        <div>
+            <button id="b10" onclick="vIn = new wektor3(0, 0, 1)">)</button>
+            <button id="b11" onclick="vIn = new wektor3(0, 0, -1)">(</button>
+        </div>
+        <pre>Pokaż tylnie ściany <input type="checkbox" onclick="face_culling = !face_culling"></pre>
+    </center>
     <p id="Xvalue"></p>
     <p id="Cvalue"></p>
     <script>
@@ -90,24 +93,27 @@
         var sześcian = function (pozycja, krawędź) {
             let d = krawędź / 2;
             this.punkty = [
-                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z - d),
-                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z - d),
-                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z - d),
-                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z - d),
                 new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z + d),
                 new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z + d),
                 new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z + d),
-                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z + d)];
+                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z + d),
+                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z - d),
+                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z - d),
+                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z - d),
+                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z - d)];
             //this.punkty = structuredClone(this.orgPunkty);
             this.sciany = [
                 [this.punkty[0], this.punkty[1], this.punkty[2], this.punkty[3]],
-                [this.punkty[4], this.punkty[5], this.punkty[6], this.punkty[7]],
-                [this.punkty[0], this.punkty[1], this.punkty[5], this.punkty[4]],
-                [this.punkty[1], this.punkty[2], this.punkty[6], this.punkty[5]],
-                [this.punkty[2], this.punkty[3], this.punkty[7], this.punkty[6]],
-                [this.punkty[3], this.punkty[0], this.punkty[4], this.punkty[7]]
+                [this.punkty[1], this.punkty[4], this.punkty[5], this.punkty[2]],
+                [this.punkty[3], this.punkty[2], this.punkty[5], this.punkty[6]],
+                [this.punkty[7], this.punkty[6], this.punkty[5], this.punkty[4]],
+                [this.punkty[3], this.punkty[6], this.punkty[7], this.punkty[0]],
+                [this.punkty[7], this.punkty[4], this.punkty[1], this.punkty[0]]
             ];
 
+        }
+        function brzeg(sciana) {
+            return (sciana[1].x - sciana[0].x) * (sciana[2].y - sciana[0].y) - (sciana[1].y - sciana[0].y) * (sciana[2].x - sciana[0].x) >= 0;
         }
         function translacja(w) {
             return new wektor3(w.x, w.y, 0);
@@ -116,14 +122,15 @@
             var a = c / obiekty[0].sciany.length;
             for (var i = 0, lobiekty = obiekty.length; i < /*Math.min(lobiekty, a)*/ lobiekty; i++) {
                 for (var j = 0, lsciany = obiekty[i].sciany.length; j < /*Math.min(lsciany, c % i + 1)*/lsciany; j++) {
-                    var sciana = obiekty[i].sciany[j];
-                    var t = translacja(sciana[0]);
+                    var wielokat = obiekty[i].sciany[j];
+                    var t = translacja(wielokat[0]);
                     ctx.beginPath();
                     ctx.moveTo(t.x + dx, t.y + dy);
-                    for (var k = 1, lpunkt = sciana.length; k < lpunkt; ++k) {
-                        //sleep(50);
-                        t = translacja(sciana[k]);
-                        ctx.lineTo(t.x + dx, t.y + dy);
+                    if (!face_culling || brzeg(wielokat)) {
+                        for (var k = 1, lpunkt = wielokat.length; k < lpunkt; ++k) {
+                            t = translacja(wielokat[k]);
+                            ctx.lineTo(t.x + dx, t.y + dy);
+                        }
                     }
                     ctx.closePath();
                     ctx.stroke();
@@ -199,7 +206,7 @@
                 qN.z = q.z / odległość;
             }
             else {
-                if (maW) { qN.w = q.w;}
+                if (maW) { qN.w = q.w; }
                 qN.x = q.x;
                 qN.y = q.y;
                 qN.z = q.z;
@@ -220,25 +227,32 @@
         ctx.strokeStyle = '#abb';
         ctx.fillStyle = 'rgba(127,127,127,0.1)';
         const skala = 50, dx = 250, dy = 250;
-        var obiekty = [
-            new sześcian(new wektor3(-3*skala, -skala, 0), skala),
-            new sześcian(new wektor3(-3*skala, 0, 0), skala),
-            new sześcian(new wektor3(-3*skala, skala, 0), skala),
-            new sześcian(new wektor3(-2*skala, 2*skala, 0), skala),
-            new sześcian(new wektor3(-skala, 3*skala, 0), skala),
-            new sześcian(new wektor3(0, 3*skala, 0), skala),
-            new sześcian(new wektor3(skala, 3*skala, 0), skala),
-            new sześcian(new wektor3(2*skala, 2*skala, 0), skala),
-            new sześcian(new wektor3(3*skala, 0, 0), skala),
-            new sześcian(new wektor3(3*skala, skala, 0), skala),
-            new sześcian(new wektor3(3*skala, -skala, 0), skala),
-            new sześcian(new wektor3(-2*skala, -2*skala, 0), skala),
-            new sześcian(new wektor3(2*skala, -2*skala, 0), skala),
-            new sześcian(new wektor3(-skala, -3*skala, 0), skala),
-            new sześcian(new wektor3(0, -3*skala, 0), skala),
-            new sześcian(new wektor3(skala, -3*skala, 0), skala),
+        var face_culling = true;
+        const obiekty = [
+            new sześcian(new wektor3(-3 * skala, -skala, 0), skala),
+            new sześcian(new wektor3(-3 * skala, 0, 0), skala),
+            new sześcian(new wektor3(-3 * skala, skala, 0), skala),
+            new sześcian(new wektor3(-2 * skala, 2 * skala, 0), skala),
+            new sześcian(new wektor3(-skala, 3 * skala, 0), skala),
+            new sześcian(new wektor3(0, 3 * skala, 0), skala),
+            new sześcian(new wektor3(skala, 3 * skala, 0), skala),
+            new sześcian(new wektor3(2 * skala, 2 * skala, 0), skala),
+            new sześcian(new wektor3(3 * skala, 0, 0), skala),
+            new sześcian(new wektor3(3 * skala, skala, 0), skala),
+            new sześcian(new wektor3(3 * skala, -skala, 0), skala),
+            new sześcian(new wektor3(-2 * skala, -2 * skala, 0), skala),
+            new sześcian(new wektor3(2 * skala, -2 * skala, 0), skala),
+            new sześcian(new wektor3(-skala, -3 * skala, 0), skala),
+            new sześcian(new wektor3(0, -3 * skala, 0), skala),
+            new sześcian(new wektor3(skala, -3 * skala, 0), skala),
+            new sześcian(new wektor3(-skala, skala, 3*skala), skala),
+            new sześcian(new wektor3(0, skala, 3*skala), skala),
+            new sześcian(new wektor3(skala, skala, 3*skala), skala),
+            new sześcian(new wektor3(0, 0, 0), skala),
+            new sześcian(new wektor3(skala, -skala, -2*skala), skala),
+            new sześcian(new wektor3(-skala, -skala, -2*skala), skala),
         ];
-        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 0, 1), vNm = normalizacja(vIn),thetaDeg = 0.5;
+        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 0, 1), vNm = normalizacja(vIn), thetaDeg = 0.5;
         stepBt.addEventListener("click", function () { window.requestAnimationFrame(Main); });
         render(obiekty, ctx, dx, dy, c);
 
