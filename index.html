@@ -71,6 +71,7 @@
         </div>
         <pre>Show back faces <input type="checkbox" onclick="face_culling = !face_culling"></pre>
         <pre>Sort by Z depth <input type="checkbox" onclick="z_depth = !z_depth" checked></pre>
+        <pre>Opacity (0-1) <input type="range" min = "0", max="1" value="0.9" step="0.05" onchange="opacity = this.value"></pre>
     </center>
     <p id="Xvalue"></p>
     <p id="Cvalue"></p>
@@ -251,10 +252,10 @@
             Tvalue = document.getElementById("Tvalue"),
             stepBt = document.getElementById("step"),
             ctx = document.getElementById('canvas').getContext("2d");
-        ctx.strokeStyle = '#abb';
-        ctx.fillStyle = 'rgba(255,255,255,0.9)';
         const scale = 50, dx = 250, dy = 250;
-        var face_culling = true, continousAnimation = true, z_depth = true;
+        var face_culling = true, continousAnimation = true, z_depth = true,opacity = 0.9;
+        ctx.strokeStyle = '#abb';
+        ctx.fillStyle = "white";
         const objects = [
             new cube(new vector3(-3 * scale, -scale, 0), scale),
             new cube(new vector3(-3 * scale, 0, 0), scale),
@@ -293,6 +294,7 @@
                     RotateQ(element, thetaDeg, normalize(vIn));
                 });
                 ctx.clearRect(0, 0, 500, 500);
+                ctx.fillStyle = `rgba(255,255,255, ${opacity})`;
                 draw(objects, ctx, dx, dy, c);
             }
             window.requestAnimationFrame(MainLoop);
