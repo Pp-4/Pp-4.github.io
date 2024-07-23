@@ -23,6 +23,10 @@
             line-height: 1.25;
             font-size: 1rem;
         }
+        .nav {
+            min-width: 25px;
+            min-height: 25px;
+        }
     </style>
 </head>
 
@@ -34,50 +38,52 @@
             <canvas style="background-color:#eee; height: 500px; width: 500px;" id="canvas" width="500"
                 height="500"></canvas>
             <div>
-                <pre>Wektor wejściowy (x,y,z,theta)</pre>
+                <pre>Input vector (x,y,z,theta)</pre>
                 <textarea id="Vvalue" rows=1 cols="30" readonly></textarea><textarea id="Tvalue" rows=1 cols="2"
                     readonly></textarea>
-                <pre>Wektor znormalizowany</pre>
+                <pre>Normalized vector</pre>
                 <textarea id="Nvalue" rows=1 cols="35" readonly></textarea>
-                <pre>Kwaternion (w,x,y,z)</pre>
+                <pre>Quaternion (w,x,y,z)</pre>
                 <textarea id="Qvalue" rows=1 cols="35" readonly></textarea>
-                <pre>Macierz rotacji 3d</pre>
+                <pre>Rotation matrix</pre>
                 <textarea id="Mvalue" rows=3 cols="35" readonly></textarea>
-                <pre>Pozycje punktów środkowej kostki</pre>
+                <pre>Vertices of some cube</pre>
                 <textarea id="Pvalue" rows=8 cols="35" readonly></textarea>
             </div>
         </div>
-        <button id="step">Krok</button>
+        <button id="step">Pause/Resume</button>
 
-        <div>
-            <button id="b1" onclick="vIn = new wektor3(1, -1, 0)">|\</button>
-            <button id="b2" onclick="vIn = new wektor3(1, 0, 0)">/\</button>
-            <button id="b3" onclick="vIn = new wektor3(1, 1, 0)">/|</button><br>
-            <button id="b4" onclick="vIn = new wektor3(0, -1, 0)">&lt;</button>
-            <button id="b5"></button>
-            <button id="b6" onclick="vIn = new wektor3(0, 1, 0)">&gt;</button><br>
-            <button id="b7" onclick="vIn = new wektor3(-1, -1, 0)">|/</button>
-            <button id="b8" onclick="vIn = new wektor3(-1, 0, 0)">\/</button>
-            <button id="b9" onclick="vIn = new wektor3(-1, 1, 0)">\|</button>
+        <div><br>
+            <button class="nav" id="b1" onclick="vIn = new vector3(1, -1, 0)">|\</button>
+            <button class="nav" id="b2" onclick="vIn = new vector3(1, 0, 0)">/\</button>
+            <button class="nav" id="b3" onclick="vIn = new vector3(1, 1, 0)">/|</button><br>
+            <button class="nav" id="b4" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
+            <button class="nav" id="b5">&nbsp;</button>
+            <button class="nav" id="b6" onclick="vIn = new vector3(0, 1, 0)">&gt;</button><br>
+            <button class="nav" id="b7" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
+            <button class="nav" id="b8" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
+            <button class="nav" id="b9" onclick="vIn = new vector3(-1, 1, 0)">\|</button>
         </div>
         <div>
-            <button id="b10" onclick="vIn = new wektor3(0, 0, -1)">)</button>
-            <button id="b11" onclick="vIn = new wektor3(0, 0, 1)">(</button>
+            <button class="nav" id="b10" onclick="vIn = new vector3(0, 0, -1)">)</button>
+            <button class="nav" id="b5">&nbsp;</button>
+            <button class="nav" id="b11" onclick="vIn = new vector3(0, 0, 1)">(</button>
         </div>
-        <pre>Pokaż tylnie ściany <input type="checkbox" onclick="face_culling = !face_culling"></pre>
+        <pre>Show back faces <input type="checkbox" onclick="face_culling = !face_culling"></pre>
+        <pre>Sort by Z depth <input type="checkbox" onclick="z_depth = !z_depth" checked></pre>
     </center>
     <p id="Xvalue"></p>
     <p id="Cvalue"></p>
     <script>
         "use strict";
-        var wektor3 = function (x, y, z) {
+        var vector3 = function (x, y, z) {
             this.x = parseFloat(x);
             this.y = parseFloat(y);
             this.z = parseFloat(z);
-            wektor3.prototype.toString = function () {
+            vector3.prototype.toString = function () {
                 return `${this.x.toFixed(5).padStart(10, ' ')},${this.y.toFixed(5).padStart(10, ' ')},${this.z.toFixed(5).padStart(10, ' ')}`;
             };
-            function tablica() {
+            function array() {
                 return [this.x, this.y, this.z];
             }
         }
@@ -90,36 +96,36 @@
                 return `${w.toFixed(5).padStart(8, ' ')},${x.toFixed(5).padStart(8, ' ')},${y.toFixed(5).padStart(8, ' ')},${z.toFixed(5).padStart(8, ' ')}`;
             }
         }
-        var sześcian = function (pozycja, krawędź) {
-            let d = krawędź / 2;
-            this.punkty = [
-                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z + d),
-                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z + d),
-                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z + d),
-                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z + d),
-                new wektor3(pozycja.x + d, pozycja.y - d, pozycja.z - d),
-                new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z - d),
-                new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z - d),
-                new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z - d)];
-            this.sciany = [
-                [this.punkty[0], this.punkty[1], this.punkty[2], this.punkty[3]],
-                [this.punkty[1], this.punkty[4], this.punkty[5], this.punkty[2]],
-                [this.punkty[3], this.punkty[2], this.punkty[5], this.punkty[6]],
-                [this.punkty[7], this.punkty[6], this.punkty[5], this.punkty[4]],
-                [this.punkty[3], this.punkty[6], this.punkty[7], this.punkty[0]],
-                [this.punkty[7], this.punkty[4], this.punkty[1], this.punkty[0]]
+        var cube = function (position, edgeLen) {
+            let d = edgeLen / 2;
+            this.points = [
+                new vector3(position.x - d, position.y - d, position.z + d),
+                new vector3(position.x + d, position.y - d, position.z + d),
+                new vector3(position.x + d, position.y + d, position.z + d),
+                new vector3(position.x - d, position.y + d, position.z + d),
+                new vector3(position.x + d, position.y - d, position.z - d),
+                new vector3(position.x + d, position.y + d, position.z - d),
+                new vector3(position.x - d, position.y + d, position.z - d),
+                new vector3(position.x - d, position.y - d, position.z - d)];
+            this.faces = [
+                [this.points[0], this.points[1], this.points[2], this.points[3]],
+                [this.points[1], this.points[4], this.points[5], this.points[2]],
+                [this.points[3], this.points[2], this.points[5], this.points[6]],
+                [this.points[7], this.points[6], this.points[5], this.points[4]],
+                [this.points[3], this.points[6], this.points[7], this.points[0]],
+                [this.points[7], this.points[4], this.points[1], this.points[0]]
             ];
 
         }
-        function brzeg(sciana) {
-            return (sciana[1].x - sciana[0].x) * (sciana[2].y - sciana[0].y) - (sciana[1].y - sciana[0].y) * (sciana[2].x - sciana[0].x) >= 0;
+        function faceCulling(face) {
+            return (face[1].x - face[0].x) * (face[2].y - face[0].y) - (face[1].y - face[0].y) * (face[2].x - face[0].x) >= 0;
         }
-        function translacja(w) {
-            return new wektor3(w.x, w.y, 0);
+        function translate(w) {
+            return new vector3(w.x, w.y, 0);
         }
-        function draw(obiekt, ctx, dx, dy, c) {
-            let mesh = z_depth(flatten(obiekt));
-            mesh.sort((a, b) => a.z_index - b.z_index);
+        function draw(object, ctx, dx, dy, c) {
+            let mesh = add_z_depth(flatten(object));
+            if(z_depth) mesh.sort((a, b) => a.z_avg - b.z_avg);//sort by average face z value
             for (let i = 0; i < mesh.length; i++) {
                 ctx.beginPath();
                 ctx.moveTo(mesh[i][0].x + dx, mesh[i][0].y + dy);
@@ -133,29 +139,29 @@
                 //ctx.fillStyle = fgfgf;
             }
         }
-        function z_depth(mesh) {
-            mesh.forEach(polygon => {
-                polygon.z_index = (polygon[0].z + polygon[1].z + polygon[2].z + polygon[3].z) / 4;
+        function add_z_depth(mesh) {
+            mesh.forEach(face => {
+                face.z_avg = (face[0].z + face[1].z + face[2].z + face[3].z) / 4;
             });
             return mesh;
         }
-        function flatten(obiekt) {
-            let liczbaObiektów = obiekt.length, liczbaPoligonów, mesh = [];
+        function flatten(object) {
+            let objectCount = object.length, faceCount, mesh = [];
             if (face_culling) {
-                for (var i = 0; i < liczbaObiektów; i++) {
-                    liczbaPoligonów = obiekt[i].sciany.length;
-                    for (var j = 0; j < liczbaPoligonów; j++) {
-                        if (brzeg(obiekt[i].sciany[j])) {
-                            mesh.push(obiekt[i].sciany[j]);
+                for (var i = 0; i < objectCount; i++) {
+                    faceCount = object[i].faces.length;
+                    for (var j = 0; j < faceCount; j++) {
+                        if (faceCulling(object[i].faces[j])) {
+                            mesh.push(object[i].faces[j]);
                         }
                     }
                 }
             }
             else {
-                for (var i = 0; i < liczbaObiektów; i++) {
-                    liczbaPoligonów = obiekt[i].sciany.length;
-                    for (var j = 0; j < liczbaPoligonów; j++) {
-                        mesh.push(obiekt[i].sciany[j]);
+                for (var i = 0; i < objectCount; i++) {
+                    faceCount = object[i].faces.length;
+                    for (var j = 0; j < faceCount; j++) {
+                        mesh.push(object[i].faces[j]);
                     }
                 }
             }
@@ -164,29 +170,29 @@
         function getRndInteger(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
         }
-        function RotacjaQ(obiekt, AngDeg, v3) {
+        function RotateQ(object, AngDeg, v3) {
             const initialQ = new quaternion(1, 0, 0, 0);
-            var rotationalQ = AVdoQ(AngDeg * Math.PI / 180, v3);
+            var rotationalQ = AVtoQ(AngDeg * Math.PI / 180, v3);
             Qvalue.innerHTML = rotationalQ;
-            var rotationalM = MacierzRotacyjna(MnożenieQ(initialQ, rotationalQ));
-            for (let i = 0; i < obiekt.punkty.length; i++) {
-                obiekt.punkty[i] = MnożenieMV(rotationalM, obiekt.punkty[i]);
+            var rotationalM = RotMatrix(MultiplyQ(initialQ, rotationalQ));
+            for (let i = 0; i < object.points.length; i++) {
+                object.points[i] = MultiplyMV(rotationalM, object.points[i]);
             }
-            Pvalue.innerHTML = FormatText(obiekt.punkty);
+            Pvalue.innerHTML = FormatText(object.points);
         }
-        function AVdoQ(AngRad, v3) {
+        function AVtoQ(AngRad, v3) {
             var w = Math.cos(AngRad / 2);
             var s = Math.sin(AngRad / 2);
             return new quaternion(w, v3.x * s, v3.y * s, v3.z * s);
         }
-        function MnożenieMV(macierz3x3, wektor3) {
-            let x = wektor3.x * 1, y = wektor3.y * 1, z = wektor3.z * 1;
-            wektor3.x = macierz3x3[0][0] * x + macierz3x3[0][1] * y + macierz3x3[0][2] * z;
-            wektor3.y = macierz3x3[1][0] * x + macierz3x3[1][1] * y + macierz3x3[1][2] * z;
-            wektor3.z = macierz3x3[2][0] * x + macierz3x3[2][1] * y + macierz3x3[2][2] * z;
-            return wektor3;
+        function MultiplyMV(matrix3x3, vector3) {
+            let x = vector3.x * 1, y = vector3.y * 1, z = vector3.z * 1;
+            vector3.x = matrix3x3[0][0] * x + matrix3x3[0][1] * y + matrix3x3[0][2] * z;
+            vector3.y = matrix3x3[1][0] * x + matrix3x3[1][1] * y + matrix3x3[1][2] * z;
+            vector3.z = matrix3x3[2][0] * x + matrix3x3[2][1] * y + matrix3x3[2][2] * z;
+            return vector3;
         }
-        function MnożenieQ(q1, q2) {
+        function MultiplyQ(q1, q2) {
             return new quaternion(
                 (q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z),
                 (q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y),
@@ -206,28 +212,28 @@
             }
             return out;
         }
-        function MacierzRotacyjna(q) {
+        function RotMatrix(q) {
             var x = [2 * (.5 - q.y * q.y - q.z * q.z), 2 * (q.x * q.y - q.w * q.z), 2 * (q.x * q.z + q.w * q.y)];
             var y = [2 * (q.x * q.y + q.w * q.z), 2 * (.5 - q.x * q.x - q.z * q.z), 2 * (q.y * q.z - q.w * q.x)];
             var z = [2 * (q.x * q.z - q.w * q.y), 2 * (q.y * q.z + q.w * q.x), 2 * (.5 - q.x * q.x - q.y * q.y)];
             Mvalue.innerHTML = `${FormatText(x)}\n${FormatText(y)}\n${FormatText(z)}`;
             return [x, y, z];
         }
-        function normalizacja(q) {
+        function normalize(q) {
             const ep1 = 1.001, ep2 = 0.999;
-            var maW = Object.hasOwn(q, 'w');
-            var odległość = q.x * q.x + q.y * q.y + q.z * q.z;
-            const qN = maW ? new quaternion() : new wektor3();
-            if (maW) { odległość += q.w * q.w }
-            if (odległość > ep1 || odległość < ep2) {
-                odległość = Math.sqrt(odległość);
-                if (maW) { qN.w = q.w / odległość; }
-                qN.x = q.x / odległość;
-                qN.y = q.y / odległość;
-                qN.z = q.z / odległość;
+            var hasW = Object.hasOwn(q, 'w');
+            var distance = q.x * q.x + q.y * q.y + q.z * q.z;
+            const qN = hasW ? new quaternion() : new vector3();
+            if (hasW) { distance += q.w * q.w }
+            if (distance > ep1 || distance < ep2) {
+                distance = Math.sqrt(distance);
+                if (hasW) { qN.w = q.w / distance; }
+                qN.x = q.x / distance;
+                qN.y = q.y / distance;
+                qN.z = q.z / distance;
             }
             else {
-                if (maW) { qN.w = q.w; }
+                if (hasW) { qN.w = q.w; }
                 qN.x = q.x;
                 qN.y = q.y;
                 qN.z = q.z;
@@ -246,53 +252,48 @@
             stepBt = document.getElementById("step"),
             ctx = document.getElementById('canvas').getContext("2d");
         ctx.strokeStyle = '#abb';
-        ctx.fillStyle = 'rgba(127,127,127,0.1)';
-        const skala = 50, dx = 250, dy = 250;
-        var face_culling = true, continousAnimation = true;
-        const obiekty = [
-            new sześcian(new wektor3(-3 * skala, -skala, 0), skala),
-            new sześcian(new wektor3(-3 * skala, 0, 0), skala),
-            new sześcian(new wektor3(-3 * skala, skala, 0), skala),
-            new sześcian(new wektor3(-2 * skala, 2 * skala, 0), skala),
-            new sześcian(new wektor3(-1 * skala, 3 * skala, 0), skala),
-            new sześcian(new wektor3(0 * skala, 3 * skala, 0), skala),
-            new sześcian(new wektor3(1 * skala, 3 * skala, 0), skala),
-            new sześcian(new wektor3(2 * skala, 2 * skala, 0), skala),
-            new sześcian(new wektor3(3 * skala, 0, 0), skala),
-            new sześcian(new wektor3(3 * skala, skala, 0), skala),
-            new sześcian(new wektor3(3 * skala, -skala, 0), skala),
-            new sześcian(new wektor3(-2 * skala, -2 * skala, 0), skala),
-            new sześcian(new wektor3(2 * skala, -2 * skala, 0), skala),
-            new sześcian(new wektor3(-1 * skala, -3 * skala, 0), skala),
-            new sześcian(new wektor3(0 * skala, -3 * skala, 0), skala),
-            new sześcian(new wektor3(1 * skala, -3 * skala, 0), skala),
-            new sześcian(new wektor3(-1 * skala, skala, 3 * skala), skala),
-            new sześcian(new wektor3(0 * skala, skala, 3 * skala), skala),
-            new sześcian(new wektor3(skala, skala, 3 * skala), skala),
-            new sześcian(new wektor3(0, 0, 0), skala),
-            new sześcian(new wektor3(skala, -skala, -2 * skala), skala),
-            new sześcian(new wektor3(-skala, -skala, -2 * skala), skala),
+        ctx.fillStyle = 'rgba(255,255,255,0.9)';
+        const scale = 50, dx = 250, dy = 250;
+        var face_culling = true, continousAnimation = true, z_depth = true;
+        const objects = [
+            new cube(new vector3(-3 * scale, -scale, 0), scale),
+            new cube(new vector3(-3 * scale, 0, 0), scale),
+            new cube(new vector3(-3 * scale, scale, 0), scale),
+            new cube(new vector3(-2 * scale, 2 * scale, 0), scale),
+            new cube(new vector3(-1 * scale, 3 * scale, 0), scale),
+            new cube(new vector3(0 * scale, 3 * scale, 0), scale),
+            new cube(new vector3(1 * scale, 3 * scale, 0), scale),
+            new cube(new vector3(2 * scale, 2 * scale, 0), scale),
+            new cube(new vector3(3 * scale, 0, 0), scale),
+            new cube(new vector3(3 * scale, scale, 0), scale),
+            new cube(new vector3(3 * scale, -scale, 0), scale),
+            new cube(new vector3(-2 * scale, -2 * scale, 0), scale),
+            new cube(new vector3(2 * scale, -2 * scale, 0), scale),
+            new cube(new vector3(-1 * scale, -3 * scale, 0), scale),
+            new cube(new vector3(0 * scale, -3 * scale, 0), scale),
+            new cube(new vector3(1 * scale, -3 * scale, 0), scale),
+            new cube(new vector3(-1 * scale, scale, 3 * scale), scale),
+            new cube(new vector3(0 * scale, scale, 3 * scale), scale),
+            new cube(new vector3(scale, scale, 3 * scale), scale),
+            new cube(new vector3(0, 0, 0), scale),
+            new cube(new vector3(scale, -scale, -2 * scale), scale),
+            new cube(new vector3(-scale, -scale, -2 * scale), scale),
         ];
-        let x = 0, y = 0, c = 10, vIn = new wektor3(1, 0, 1), vNm = normalizacja(vIn), thetaDeg = 0.5;
+        let x = 0, y = 0, c = 10, vIn = new vector3(1, 0, 1), vNm = normalize(vIn), thetaDeg = 0.5;
         stepBt.addEventListener("click", function () { continousAnimation = !continousAnimation; });
-        draw(obiekty, ctx, dx, dy, c);
+        draw(objects, ctx, dx, dy, c);
         window.onload = MainLoop
-        let secondsPassed, oldTimeStamp, fps;
         //main
         function MainLoop() {
             if (continousAnimation) {
                 Vvalue.innerHTML = vIn;
                 Tvalue.innerHTML = thetaDeg;
                 Nvalue.innerHTML = vNm;
-                obiekty.forEach(element => {
-                    RotacjaQ(element, thetaDeg, normalizacja(vIn));
+                objects.forEach(element => {
+                    RotateQ(element, thetaDeg, normalize(vIn));
                 });
                 ctx.clearRect(0, 0, 500, 500);
-                draw(obiekty, ctx, dx, dy, c);
-                ctx.fillStyle = 'black';
-                ctx.font = '25px Arial';
-                ctx.fillText("FPS: " + fps, 10, 30);
-                ctx.fillStyle = 'rgba(255,255,255,1)';
+                draw(objects, ctx, dx, dy, c);
             }
             window.requestAnimationFrame(MainLoop);
         }
