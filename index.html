@@ -54,15 +54,15 @@
             <button id="b2" onclick="vIn = new wektor3(1, 0, 0)">/\</button>
             <button id="b3" onclick="vIn = new wektor3(1, 1, 0)">/|</button><br>
             <button id="b4" onclick="vIn = new wektor3(0, -1, 0)">&lt;</button>
-            <button id="b5" onclick="thetaDeg = thetaDeg > 0 ? 0 : 0.5">=</button>
+            <button id="b5"></button>
             <button id="b6" onclick="vIn = new wektor3(0, 1, 0)">&gt;</button><br>
             <button id="b7" onclick="vIn = new wektor3(-1, -1, 0)">|/</button>
             <button id="b8" onclick="vIn = new wektor3(-1, 0, 0)">\/</button>
             <button id="b9" onclick="vIn = new wektor3(-1, 1, 0)">\|</button>
         </div>
         <div>
-            <button id="b10" onclick="vIn = new wektor3(0, 0, 1)">)</button>
-            <button id="b11" onclick="vIn = new wektor3(0, 0, -1)">(</button>
+            <button id="b10" onclick="vIn = new wektor3(0, 0, -1)">)</button>
+            <button id="b11" onclick="vIn = new wektor3(0, 0, 1)">(</button>
         </div>
         <pre>Pokaż tylnie ściany <input type="checkbox" onclick="face_culling = !face_culling"></pre>
     </center>
@@ -101,7 +101,6 @@
                 new wektor3(pozycja.x + d, pozycja.y + d, pozycja.z - d),
                 new wektor3(pozycja.x - d, pozycja.y + d, pozycja.z - d),
                 new wektor3(pozycja.x - d, pozycja.y - d, pozycja.z - d)];
-            //this.punkty = structuredClone(this.orgPunkty);
             this.sciany = [
                 [this.punkty[0], this.punkty[1], this.punkty[2], this.punkty[3]],
                 [this.punkty[1], this.punkty[4], this.punkty[5], this.punkty[2]],
@@ -118,27 +117,49 @@
         function translacja(w) {
             return new wektor3(w.x, w.y, 0);
         }
-        function render(obiekt, ctx, dx, dy, c) {
-            var a = c / obiekty[0].sciany.length;
-            for (var i = 0, lobiekty = obiekty.length; i < /*Math.min(lobiekty, a)*/ lobiekty; i++) {
-                for (var j = 0, lsciany = obiekty[i].sciany.length; j < /*Math.min(lsciany, c % i + 1)*/lsciany; j++) {
-                    var wielokat = obiekty[i].sciany[j];
-                    var t = translacja(wielokat[0]);
-                    ctx.beginPath();
-                    ctx.moveTo(t.x + dx, t.y + dy);
-                    if (!face_culling || brzeg(wielokat)) {
-                        for (var k = 1, lpunkt = wielokat.length; k < lpunkt; ++k) {
-                            t = translacja(wielokat[k]);
-                            ctx.lineTo(t.x + dx, t.y + dy);
+        function draw(obiekt, ctx, dx, dy, c) {
+            let mesh = z_depth(flatten(obiekt));
+            mesh.sort((a, b) => a.z_index - b.z_index);
+            for (let i = 0; i < mesh.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(mesh[i][0].x + dx, mesh[i][0].y + dy);
+                for (let j = 1; j < mesh[i].length; j++) {
+                    ctx.lineTo(mesh[i][j].x + dx, mesh[i][j].y + dy);
+                }
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+                //var fgfgf = `rgba(${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(1, 10) / 10})`;
+                //ctx.fillStyle = fgfgf;
+            }
+        }
+        function z_depth(mesh) {
+            mesh.forEach(polygon => {
+                polygon.z_index = (polygon[0].z + polygon[1].z + polygon[2].z + polygon[3].z) / 4;
+            });
+            return mesh;
+        }
+        function flatten(obiekt) {
+            let liczbaObiektów = obiekt.length, liczbaPoligonów, mesh = [];
+            if (face_culling) {
+                for (var i = 0; i < liczbaObiektów; i++) {
+                    liczbaPoligonów = obiekt[i].sciany.length;
+                    for (var j = 0; j < liczbaPoligonów; j++) {
+                        if (brzeg(obiekt[i].sciany[j])) {
+                            mesh.push(obiekt[i].sciany[j]);
                         }
                     }
-                    ctx.closePath();
-                    ctx.stroke();
-                    ctx.fill();
-                    //var fgfgf = `rgba(${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(0, 255)},${getRndInteger(1, 10) / 10})`;
-                    //ctx.fillStyle = fgfgf;
                 }
             }
+            else {
+                for (var i = 0; i < liczbaObiektów; i++) {
+                    liczbaPoligonów = obiekt[i].sciany.length;
+                    for (var j = 0; j < liczbaPoligonów; j++) {
+                        mesh.push(obiekt[i].sciany[j]);
+                    }
+                }
+            }
+            return mesh;
         }
         function getRndInteger(min, max) {
             return Math.floor(Math.random() * (max - min)) + min;
@@ -227,53 +248,53 @@
         ctx.strokeStyle = '#abb';
         ctx.fillStyle = 'rgba(127,127,127,0.1)';
         const skala = 50, dx = 250, dy = 250;
-        var face_culling = true;
+        var face_culling = true, continousAnimation = true;
         const obiekty = [
             new sześcian(new wektor3(-3 * skala, -skala, 0), skala),
             new sześcian(new wektor3(-3 * skala, 0, 0), skala),
             new sześcian(new wektor3(-3 * skala, skala, 0), skala),
             new sześcian(new wektor3(-2 * skala, 2 * skala, 0), skala),
-            new sześcian(new wektor3(-skala, 3 * skala, 0), skala),
-            new sześcian(new wektor3(0, 3 * skala, 0), skala),
-            new sześcian(new wektor3(skala, 3 * skala, 0), skala),
+            new sześcian(new wektor3(-1 * skala, 3 * skala, 0), skala),
+            new sześcian(new wektor3(0 * skala, 3 * skala, 0), skala),
+            new sześcian(new wektor3(1 * skala, 3 * skala, 0), skala),
             new sześcian(new wektor3(2 * skala, 2 * skala, 0), skala),
             new sześcian(new wektor3(3 * skala, 0, 0), skala),
             new sześcian(new wektor3(3 * skala, skala, 0), skala),
             new sześcian(new wektor3(3 * skala, -skala, 0), skala),
             new sześcian(new wektor3(-2 * skala, -2 * skala, 0), skala),
             new sześcian(new wektor3(2 * skala, -2 * skala, 0), skala),
-            new sześcian(new wektor3(-skala, -3 * skala, 0), skala),
-            new sześcian(new wektor3(0, -3 * skala, 0), skala),
-            new sześcian(new wektor3(skala, -3 * skala, 0), skala),
-            new sześcian(new wektor3(-skala, skala, 3*skala), skala),
-            new sześcian(new wektor3(0, skala, 3*skala), skala),
-            new sześcian(new wektor3(skala, skala, 3*skala), skala),
+            new sześcian(new wektor3(-1 * skala, -3 * skala, 0), skala),
+            new sześcian(new wektor3(0 * skala, -3 * skala, 0), skala),
+            new sześcian(new wektor3(1 * skala, -3 * skala, 0), skala),
+            new sześcian(new wektor3(-1 * skala, skala, 3 * skala), skala),
+            new sześcian(new wektor3(0 * skala, skala, 3 * skala), skala),
+            new sześcian(new wektor3(skala, skala, 3 * skala), skala),
             new sześcian(new wektor3(0, 0, 0), skala),
-            new sześcian(new wektor3(skala, -skala, -2*skala), skala),
-            new sześcian(new wektor3(-skala, -skala, -2*skala), skala),
+            new sześcian(new wektor3(skala, -skala, -2 * skala), skala),
+            new sześcian(new wektor3(-skala, -skala, -2 * skala), skala),
         ];
         let x = 0, y = 0, c = 10, vIn = new wektor3(1, 0, 1), vNm = normalizacja(vIn), thetaDeg = 0.5;
-        stepBt.addEventListener("click", function () { window.requestAnimationFrame(Main); });
-        render(obiekty, ctx, dx, dy, c);
-
-
+        stepBt.addEventListener("click", function () { continousAnimation = !continousAnimation; });
+        draw(obiekty, ctx, dx, dy, c);
+        window.onload = MainLoop
+        let secondsPassed, oldTimeStamp, fps;
         //main
-        function Main() {
-            Vvalue.innerHTML = vIn;
-            Tvalue.innerHTML = thetaDeg;
-            Nvalue.innerHTML = vNm;
-            obiekty.forEach(element => {
-                RotacjaQ(element, thetaDeg, normalizacja(vIn));
-            });
-            ctx.clearRect(0, 0, 500, 500);
-            render(obiekty, ctx, dx, dy, c);
-            /*x = (x + (Math.PI / 180)) % (2 * Math.PI);
-            y = (y + (Math.PI / 180) / 2) % (4 * Math.PI);
-            c += 0.1;
-            c = c % 200;
-            document.getElementById("Xvalue").innerHTML = x;
-            document.getElementById("Cvalue").innerHTML = c;*/
-            window.requestAnimationFrame(Main);
+        function MainLoop() {
+            if (continousAnimation) {
+                Vvalue.innerHTML = vIn;
+                Tvalue.innerHTML = thetaDeg;
+                Nvalue.innerHTML = vNm;
+                obiekty.forEach(element => {
+                    RotacjaQ(element, thetaDeg, normalizacja(vIn));
+                });
+                ctx.clearRect(0, 0, 500, 500);
+                draw(obiekty, ctx, dx, dy, c);
+                ctx.fillStyle = 'black';
+                ctx.font = '25px Arial';
+                ctx.fillText("FPS: " + fps, 10, 30);
+                ctx.fillStyle = 'rgba(255,255,255,1)';
+            }
+            window.requestAnimationFrame(MainLoop);
         }
     </script>
 
