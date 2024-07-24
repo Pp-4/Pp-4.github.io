@@ -58,7 +58,7 @@
             <button class="nav" id="b2" onclick="vIn = new vector3(1, 0, 0)">/\</button>
             <button class="nav" id="b3" onclick="vIn = new vector3(1, 1, 0)">/|</button><br>
             <button class="nav" id="b4" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
-            <button class="nav" id="b5">&nbsp;</button>
+            <button class="nav" id="b5" onclick="thetaDeg = thetaDeg>0?0:0.5">&nbsp;</button>
             <button class="nav" id="b6" onclick="vIn = new vector3(0, 1, 0)">&gt;</button><br>
             <button class="nav" id="b7" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
             <button class="nav" id="b8" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
@@ -71,7 +71,7 @@
         </div>
         <pre>Show back faces <input type="checkbox" onclick="face_culling = !face_culling"></pre>
         <pre>Sort by Z depth <input type="checkbox" onclick="z_depth = !z_depth" checked></pre>
-        <pre>Opacity (0-1) <input type="range" min = "0", max="1" value="0.9" step="0.05" onchange="opacity = this.value"></pre>
+        <pre>Opacity (0-1) <input type="range" min = "0", max="1" value="0.9" step="0.05" oninput="opacity = this.value"></pre>
     </center>
     <p id="Xvalue"></p>
     <p id="Cvalue"></p>
