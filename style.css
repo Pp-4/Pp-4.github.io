@@ -37,6 +37,12 @@ textarea {
   width: 500px;
   image-rendering: pixelated;
 }
+.wrapper {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 1em;
+  flex-wrap: wrap;
+}
 textarea {
   font-family: "Lucida Console", "DejaVu Sans Mono", monospace;
   font-weight: bold;

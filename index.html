@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>
         Generic github page
     </title>
+    <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
@@ -65,19 +66,19 @@
         </header>
         <div class="main-section">
 
-            <div style="display: flex; justify-content: space-evenly; margin-top: 1em;">
-                <canvas id="canvas" width="500" height="500"></canvas>
+            <div class="wrapper">
+                <canvas id="canvas" width="500" height="500" style="max-width: 95%;"></canvas>
                 <div class="controls">
-                    <pre>Input vector (x,y,z,theta)</pre>
+                    <pre><label for="Vvalue">Input vector (x,y,z,</label><label for="Tvalue">theta)</label></pre>
                     <textarea id="Vvalue" rows=1 cols="32" readonly></textarea>
                     <textarea id="Tvalue" rows=1 cols="3" readonly></textarea>
-                    <pre>Normalized vector</pre>
+                    <pre><label for="Nvalue">Normalized vector</label></pre>
                     <textarea id="Nvalue" rows=1 cols="36" readonly></textarea>
-                    <pre>Quaternion (w,x,y,z)</pre>
+                    <pre><label for="Qvalue"></label>Quaternion (w,x,y,z)</label></pre>
                     <textarea id="Qvalue" rows=1 cols="36" readonly></textarea>
-                    <pre>Rotation matrix</pre>
+                    <pre><label for="Mvalue"></label>Rotation matrix</label></pre>
                     <textarea id="Mvalue" rows=3 cols="36" readonly></textarea>
-                    <pre>Vertices of some cube</pre>
+                    <pre><label for="Pvalue">Vertices of some cube</label></pre>
                     <textarea id="Pvalue" rows=8 cols="36" readonly></textarea>
                 </div>
             </div>
