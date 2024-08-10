@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>
         Generic github page
     </title>
+    <meta name="viewport" content="width=device-width">
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
@@ -65,40 +66,40 @@
         </header>
         <div class="main-section">
 
-            <div style="display: flex; justify-content: space-evenly; margin-top: 1em;">
-                <canvas id="canvas" width="500" height="500"></canvas>
+            <div class="wrapper">
+                <canvas id="canvas" width="500" height="500" style="max-width: 95%;"></canvas>
                 <div class="controls">
-                    <pre>Input vector (x,y,z,theta)</pre>
+                    <pre><label for="Vvalue">Input vector (x,y,z,</label><label for="Tvalue">theta)</label></pre>
                     <textarea id="Vvalue" rows=1 cols="32" readonly></textarea>
                     <textarea id="Tvalue" rows=1 cols="3" readonly></textarea>
-                    <pre>Normalized vector</pre>
+                    <pre><label for="Nvalue">Normalized vector</label></pre>
                     <textarea id="Nvalue" rows=1 cols="36" readonly></textarea>
-                    <pre>Quaternion (w,x,y,z)</pre>
+                    <pre><label for="Qvalue"></label>Quaternion (w,x,y,z)</label></pre>
                     <textarea id="Qvalue" rows=1 cols="36" readonly></textarea>
-                    <pre>Rotation matrix</pre>
+                    <pre><label for="Mvalue"></label>Rotation matrix</label></pre>
                     <textarea id="Mvalue" rows=3 cols="36" readonly></textarea>
-                    <pre>Vertices of some cube</pre>
+                    <pre><label for="Pvalue">Vertices of some cube</label></pre>
                     <textarea id="Pvalue" rows=8 cols="36" readonly></textarea>
                 </div>
             </div>
             <div style="display: flex; justify-content: center; margin-top: 1em;">
                 <div style="display: flex; flex-direction: column;">
-                <button id="step">► ||</button>
-                <div><br>
-                    <button class="nav" id="b1" onclick="vIn = new vector3(1, -1, 0)">|\</button>
-                    <button class="nav" id="b2" onclick="vIn = new vector3(1, 0, 0)">/\</button>
-                    <button class="nav" id="b3" onclick="vIn = new vector3(1, 1, 0)">/|</button><br>
-                    <button class="nav" id="b4" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
-                    <button class="nav" id="b5" onclick="thetaDeg = thetaDeg>0?0:0.5">&nbsp;</button>
-                    <button class="nav" id="b6" onclick="vIn = new vector3(0, 1, 0)">&gt;</button><br>
-                    <button class="nav" id="b7" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
-                    <button class="nav" id="b8" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
-                    <button class="nav" id="b9" onclick="vIn = new vector3(-1, 1, 0)">\|</button><br>
-                    <button class="nav" id="b10" onclick="vIn = new vector3(0, 0, -1)">)</button>
-                    <button class="nav" id="b5">&nbsp;</button>
-                    <button class="nav" id="b11" onclick="vIn = new vector3(0, 0, 1)">(</button>
+                    <button id="step">► ||</button>
+                    <div><br>
+                        <button class="nav" id="b1" onclick="vIn = new vector3(1, -1, 0)">|\</button>
+                        <button class="nav" id="b2" onclick="vIn = new vector3(1, 0, 0)">/\</button>
+                        <button class="nav" id="b3" onclick="vIn = new vector3(1, 1, 0)">/|</button><br>
+                        <button class="nav" id="b4" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
+                        <button class="nav" id="b5" onclick="thetaDeg = thetaDeg>0?0:0.5">&nbsp;</button>
+                        <button class="nav" id="b6" onclick="vIn = new vector3(0, 1, 0)">&gt;</button><br>
+                        <button class="nav" id="b7" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
+                        <button class="nav" id="b8" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
+                        <button class="nav" id="b9" onclick="vIn = new vector3(-1, 1, 0)">\|</button><br>
+                        <button class="nav" id="b10" onclick="vIn = new vector3(0, 0, -1)">)</button>
+                        <button class="nav" id="b5">&nbsp;</button>
+                        <button class="nav" id="b11" onclick="vIn = new vector3(0, 0, 1)">(</button>
+                    </div>
                 </div>
-            </div>
                 <br>
                 <pre>
             Show back faces <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
@@ -126,11 +127,11 @@
 
         var vector3 = function (x, y, z) {
             this.x = parseFloat(x);
-            if (this.x !== this.x) x = 0;
+            if (this.x !== this.x || x === undefined) this.x = 0;
             this.y = parseFloat(y);
-            if (this.y !== this.y) y = 0;
+            if (this.y !== this.y || y === undefined) this.y = 0;
             this.z = parseFloat(z);
-            if (this.z !== this.z) z = 0;
+            if (this.z !== this.z || z === undefined) this.z = 0;
             vector3.prototype.toString = function () {
                 return `${this.x.toFixed(5).padStart(10, ' ')},${this.y.toFixed(5).padStart(10, ' ')},${this.z.toFixed(5).padStart(10, ' ')}`;
             };
@@ -140,13 +141,13 @@
         }
         var quaternion = function (w, x, y, z) {
             this.w = parseFloat(w);
-            if (this.w !== this.w) w = 0;
+            if (this.w !== this.w || w === undefined) this.w = 0;
             this.x = parseFloat(x);
-            if (this.x !== this.x) x = 0;
+            if (this.x !== this.x || x === undefined) this.x = 0;
             this.y = parseFloat(y);
-            if (this.y !== this.y) y = 0;
+            if (this.y !== this.y || y === undefined) this.y = 0;
             this.z = parseFloat(z);
-            if (this.z !== this.z) z = 0;
+            if (this.z !== this.z || z === undefined) this.z = 0;
             quaternion.prototype.toString = function () {
                 return `${w.toFixed(5).padStart(8, ' ')},${x.toFixed(5).padStart(8, ' ')},${y.toFixed(5).padStart(8, ' ')},${z.toFixed(5).padStart(8, ' ')}`;
             }
@@ -278,26 +279,29 @@
             Mvalue.innerHTML = `${FormatText(x)}\n${FormatText(y)}\n${FormatText(z)}`;
             return [x, y, z];
         }
-        function normalize(q) {
+        function normalize(vector) {
             const ep1 = 1.001, ep2 = 0.999;
-            var hasW = Object.hasOwn(q, 'w');
-            var distance = q.x * q.x + q.y * q.y + q.z * q.z;
-            const qN = hasW ? new quaternion() : new vector3();
-            if (hasW) { distance += q.w * q.w }
+            const isQuaternion = Object.hasOwn(vector, 'w');
+            let distance = vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
+            const normalised = isQuaternion ? new quaternion() : new vector3();
+            if (isQuaternion) { distance += vector.w * vector.w }
             if (distance > ep1 || distance < ep2) {
-                distance = Math.sqrt(distance);
-                if (hasW) qN.w = q.w / distance;
-                qN.x = q.x / distance;
-                qN.y = q.y / distance;
-                qN.z = q.z / distance;
+                if (distance != 0) {
+                    distance = Math.sqrt(distance);
+                    if (isQuaternion) normalised.w = vector.w / distance;
+                    normalised.x = vector.x / distance;
+                    normalised.y = vector.y / distance;
+                    normalised.z = vector.z / distance;
+
+                }
             }
             else {
-                if (hasW) qN.w = q.w;
-                qN.x = q.x;
-                qN.y = q.y;
-                qN.z = q.z;
+                if (isQuaternion) normalised.w = vector.w;
+                normalised.x = vector.x;
+                normalised.y = vector.y;
+                normalised.z = vector.z;
             }
-            return qN;
+            return normalised;
         }
         function hideAnim(mesh) {
             let temp = frameCounter % mesh.length;
@@ -314,7 +318,7 @@
         function RotationWithKeyboardKeys(vector3) {
             let temp = { w: keysPressed['w'] ? 1 : 0, a: keysPressed['a'] ? 1 : 0, s: keysPressed['s'] ? 1 : 0, d: keysPressed['d'] ? 1 : 0, q: keysPressed['q'] ? 1 : 0, e: keysPressed['e'] ? 1 : 0 };
             if (temp.a || temp.d) vector3.y = -temp.a + temp.d;
-            if (temp.w || temp.s) vector3.x = -temp.w + temp.s;
+            if (temp.w || temp.s) vector3.x = -temp.s + temp.w;
             if (temp.q || temp.e) vector3.z = -temp.q + temp.e;
         }
 
@@ -369,11 +373,12 @@
         function MainLoop() {
             if (continousAnimation) {
                 RotationWithKeyboardKeys(vIn);
+                vNm = normalize(vIn);
                 Vvalue.innerHTML = vIn;
                 Tvalue.innerHTML = thetaDeg;
                 Nvalue.innerHTML = vNm;
                 objects.forEach(element => {
-                    RotateQ(element, thetaDeg, normalize(vIn));
+                    RotateQ(element, thetaDeg, vNm);
                 });
                 ctx.clearRect(0, 0, 500, 500);
                 ctx.fillStyle = `rgba(255,255,255, ${opacity})`;
