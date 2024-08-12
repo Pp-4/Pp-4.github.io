@@ -36,6 +36,19 @@ textarea {
   height: 500px;
   width: 500px;
   image-rendering: pixelated;
+  max-width: 95vw;
+  max-height: 95vw;
+  order: 1;
+}
+.information {
+  order: 2;
+}
+.controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 1em;
+  order: 3;
+  width: 100%;
 }
 .wrapper {
   display: flex;
@@ -54,6 +67,8 @@ textarea {
 .nav {
   min-width: 25px;
   min-height: 25px;
+  margin: 5px;
+  padding: 5px;
 }
 html,
 body {
@@ -108,4 +123,15 @@ body {
 .bottom-bar {
   height: 30px;
   flex: 0 1 30px;
+}
+@media only screen and (max-width:1000px) {
+  #canvas {
+    order: 1;
+  }
+  .information {
+    order: 3;
+  }
+  .controls {
+    order: 2;
+  }
 }
