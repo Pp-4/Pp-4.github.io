@@ -114,15 +114,12 @@
                     </div>
                 </div>
                 <br>
-                <pre>
-    Show back faces <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
-    Sort by Z depth <input id="z_depth" type="checkbox" onclick="z_depth = !z_depth" checked>
-    Fade Animation  <input  id="hide_anim" type="checkbox" onclick="hide_anim = !hide_anim">
-    Opacity (0-1)
-    <input id="opacity" type="range" min = "0", max="1" value="0.9" step="0.05" oninput="opacity = this.value">
-        </pre>
-                <p id="Xvalue"></p>
-                <p id="Cvalue"></p>
+                <pre>    <label for="face_culling">Show back faces</label> <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
+    <label for="z_depth">Sort by Z depth</label> <input id="z_depth" type="checkbox" onclick="z_depth = !z_depth" checked>
+    <label for="hide_anim">Fade Animation</label>  <input  id="hide_anim" type="checkbox" onclick="hide_anim = !hide_anim">
+    
+    <label for="opacity">Opacity (0-1)</label>
+    <input id="opacity" type="range" min = "0", max="1" value="0.9" step="0.05" oninput="opacity = this.value"></pre>
             </div>
         </div>
         <footer class="bottom-bar">

@@ -17,6 +17,10 @@
   color: var(--blaaack);
   background: var(--whiteee);
 }
+textarea::selection {
+  color: var(--whiteee);
+  background: var(--blaaack);
+}
 canvas,
 textarea {
   box-shadow: inset -1px -1px #fff, inset 1px 1px grey, inset -2px -2px #dfdfdf,
@@ -105,11 +109,17 @@ body {
   text-wrap: nowrap;
   overflow: hidden;
 }
+.pattern-holder {
+  position: absolute;
+  height: 0;
+  width: 0;
+}
 .title-bar-icon {
   aspect-ratio: 1/1;
   shape-rendering: crispEdges;
   border-color: var(--blaaack);
   height: 100%;
+  width: 30px;
   display: contents;
 }
 .title-bar-icon > svg {
@@ -119,12 +129,16 @@ body {
   background-color: var(--reddish);
   overflow-y: auto;
   flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 10%;
+  justify-content: center;
 }
 .bottom-bar {
   height: 30px;
   flex: 0 1 30px;
 }
-@media only screen and (max-width:1000px) {
+@media only screen and (max-width: 1000px) {
   #canvas {
     order: 1;
   }
@@ -134,4 +148,8 @@ body {
   .controls {
     order: 2;
   }
+
+}
+.text-justify * {
+text-align: justify ;
 }
