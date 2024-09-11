@@ -1,0 +1,30 @@
+    <svg class="pattern-holder" style="position: absolute; height: 0; width: 0;">
+        <defs>
+            <pattern id="dith-0" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="8" height="8" fill="black" />
+            </pattern>
+            <pattern id="dith-1" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="8" height="8" fill="black" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="5" y="5" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-2" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="4" height="4" fill="black" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-3" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="4" height="4" fill="black" />
+                <rect class="rect-color-2" x="0" y="1" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="2" y="3" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-4" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="2" height="2" fill="black" />
+                <rect class="rect-color-2" x="0" y="1" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-5" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="2" height="2" fill="black" />
+                <rect class="rect-color-2" x="0" y="0" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+            </pattern>
+        </defs>
+    </svg>

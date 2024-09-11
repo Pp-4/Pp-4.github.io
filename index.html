@@ -7,10 +7,11 @@
     </title>
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="Page with Pp4's various projects. Main page.">
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body>
+
     <svg class="pattern-holder" style="position: absolute; height: 0; width: 0;">
         <defs>
             <pattern id="dith-0" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
@@ -39,88 +40,34 @@
                 <rect class="rect-color-2" x="0" y="0" width="1" height="1" fill="white" />
                 <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
             </pattern>
+            <g id="icon" color="var(--blaaack)">
+                <rect x="1" y="1" width="9" height="2" fill="currentcolor" />
+                <rect x="1" y="5" width="9" height="2" fill="currentcolor" />
+                <rect x="1" y="9" width="9" height="2" fill="currentcolor" />
+            </g>
         </defs>
     </svg>
     <div class="window">
         <header class="title-bar">
             <div class="title-bar-icon">
-                <svg height="100%" viewBox="0 0 11 12" style="border-right: 1px solid;">
-                    <g color="var(--blaaack)">
-                        <rect x="1" y="1" width="9" height="2" fill="currentcolor" />
-                        <rect x="1" y="5" width="9" height="2" fill="currentcolor" />
-                        <rect x="1" y="9" width="9" height="2" fill="currentcolor" />
-                    </g>
+                <svg viewBox="0 0 11 12" style="border-right: 1px solid;">
+                    <use href="#icon" />
                 </svg>
             </div>
-            <span class="title-bar-title" style="text-transform: uppercase;">
+            <span class="title-bar-title">
                 Hello World - I'm hosted with GitHub Pages.
             </span>
             <div class="title-bar-icon">
-                <svg height="100%" viewBox="0 0 11 12" style="border-left: 1px solid;">
-                    <g color="var(--blaaack)">
-                        <rect x="1" y="1" width="9" height="2" fill="currentcolor" />
-                        <rect x="1" y="5" width="9" height="2" fill="currentcolor" />
-                        <rect x="1" y="9" width="9" height="2" fill="currentcolor" />
-                    </g>
+                <svg viewBox="0 0 11 12" style="border-left: 1px solid;">
+                    <use href="#icon" />
                 </svg>
             </div>
         </header>
-        <div class="main-section" style="display: flex; flex-wrap: wrap; gap:0 10%; justify-content: center;">
-            <canvas id="canvas" width="500" height="500"></canvas>
-            <div class="information">
-                <pre><label for="Vvalue">Input vector (x,y,z,</label><label for="Tvalue">theta)</label></pre>
-                <textarea id="Vvalue" rows=1 cols="32" readonly></textarea>
-                <textarea id="Tvalue" rows=1 cols="3" readonly></textarea>
-                <pre><label for="Nvalue">Normalized vector</label></pre>
-                <textarea id="Nvalue" rows=1 cols="36" readonly></textarea>
-                <pre><label for="Qvalue">Quaternion (w,x,y,z)</label></pre>
-                <textarea id="Qvalue" rows=1 cols="36" readonly></textarea>
-                <pre><label for="Mvalue">Rotation matrix</label></pre>
-                <textarea id="Mvalue" rows=3 cols="36" readonly></textarea>
-                <pre><label for="Pvalue">Vertices of some cube</label></pre>
-                <textarea id="Pvalue" rows=8 cols="36" readonly></textarea>
-            </div>
-            <div class="controls">
-                <div style="display: flex; flex-direction: column;">
-                    <button aria-label="Play/pause" id="step">► ||</button>
-                    <div style="display: flex; flex-direction: row;">
-                        <button class="nav" id="b1" aria-label="Top left"
-                            onclick="vIn = new vector3(1, -1, 0)">|\</button>
-                        <button class="nav" id="b2" aria-label="Top" onclick="vIn = new vector3(1, 0, 0)">/\</button>
-                        <button class="nav" id="b3" aria-label="Top right"
-                            onclick="vIn = new vector3(1, 1, 0)">/|</button>
-                    </div>
-                    <div style="display: flex; flex-direction: row;">
-                        <button class="nav" id="b4" aria-label="Left"
-                            onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
-                        <button class="nav" id="b5" aria-label="Switch speed"
-                            onclick="thetaDeg = thetaDeg>0?0:0.5">0</button>
-                        <button class="nav" id="b6" aria-label="Right"
-                            onclick="vIn = new vector3(0, 1, 0)">&gt;</button>
-                    </div>
-                    <div style="display: flex; flex-direction: row;">
-                        <button class="nav" id="b7" aria-label="Bottom right"
-                            onclick="vIn = new vector3(-1, -1, 0)">|/</button>
-                        <button class="nav" id="b8" aria-label="Bottom"
-                            onclick="vIn = new vector3(-1, 0, 0)">\/</button>
-                        <button class="nav" id="b9" aria-label="Bottom Left"
-                            onclick="vIn = new vector3(-1, 1, 0)">\|</button><br>
-                    </div>
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <button class="nav" id="b10" aria-label="Rotate Left"
-                            onclick="vIn = new vector3(0, 0, -1)">(</button>
-                        <button class="nav" id="b11" aria-label="Rotate right"
-                            onclick="vIn = new vector3(0, 0, 1)">)</button>
-                    </div>
-                </div>
-                <br>
-                <pre>    <label for="face_culling">Show back faces</label> <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
-    <label for="z_depth">Sort by Z depth</label> <input id="z_depth" type="checkbox" onclick="z_depth = !z_depth" checked>
-    <label for="hide_anim">Fade Animation</label>  <input  id="hide_anim" type="checkbox" onclick="hide_anim = !hide_anim">
-    
-    <label for="opacity">Opacity (0-1)</label>
-    <input id="opacity" type="range" min = "0", max="1" value="0.9" step="0.05" oninput="opacity = this.value"></pre>
-            </div>
+        <div class="main-section">
+
+        <a href="pages/cubes.html"> 3d stuff</a>
+        <a href="pages/callback.html">Murder Drones stuff</a>
+
         </div>
         <footer class="bottom-bar">
             <svg class="dither" width="100%" height="100%" style="position: relative; display: block;"
@@ -129,310 +76,7 @@
             </svg>
         </footer>
     </div>
-    <script>
-        "use strict";
-
-
-        //obiekty
-
-
-        var vector3 = function (x, y, z) {
-            this.x = parseFloat(x);
-            if (this.x !== this.x || x === undefined) this.x = 0;
-            this.y = parseFloat(y);
-            if (this.y !== this.y || y === undefined) this.y = 0;
-            this.z = parseFloat(z);
-            if (this.z !== this.z || z === undefined) this.z = 0;
-            vector3.prototype.toString = function () {
-                return `${this.x.toFixed(5).padStart(10, ' ')},${this.y.toFixed(5).padStart(10, ' ')},${this.z.toFixed(5).padStart(10, ' ')}`;
-            };
-            function array() {
-                return [this.x, this.y, this.z];
-            }
-        }
-        var quaternion = function (w, x, y, z) {
-            this.w = parseFloat(w);
-            if (this.w !== this.w || w === undefined) this.w = 0;
-            this.x = parseFloat(x);
-            if (this.x !== this.x || x === undefined) this.x = 0;
-            this.y = parseFloat(y);
-            if (this.y !== this.y || y === undefined) this.y = 0;
-            this.z = parseFloat(z);
-            if (this.z !== this.z || z === undefined) this.z = 0;
-            quaternion.prototype.toString = function () {
-                return `${w.toFixed(5).padStart(8, ' ')},${x.toFixed(5).padStart(8, ' ')},${y.toFixed(5).padStart(8, ' ')},${z.toFixed(5).padStart(8, ' ')}`;
-            }
-        }
-        var cube = function (position, edgeLen) {
-            let d = edgeLen / 2;
-            this.points = [
-                new vector3(position.x - d, position.y - d, position.z + d),
-                new vector3(position.x + d, position.y - d, position.z + d),
-                new vector3(position.x + d, position.y + d, position.z + d),
-                new vector3(position.x - d, position.y + d, position.z + d),
-                new vector3(position.x + d, position.y - d, position.z - d),
-                new vector3(position.x + d, position.y + d, position.z - d),
-                new vector3(position.x - d, position.y + d, position.z - d),
-                new vector3(position.x - d, position.y - d, position.z - d)];
-            this.faces = [
-                [this.points[0], this.points[1], this.points[2], this.points[3]],
-                [this.points[1], this.points[4], this.points[5], this.points[2]],
-                [this.points[3], this.points[2], this.points[5], this.points[6]],
-                [this.points[7], this.points[6], this.points[5], this.points[4]],
-                [this.points[3], this.points[6], this.points[7], this.points[0]],
-                [this.points[7], this.points[4], this.points[1], this.points[0]]
-            ];
-        }
-
-
-        //funkcje
-
-
-        function faceCulling(face) {
-            return (face[1].x - face[0].x) * (face[2].y - face[0].y) - (face[1].y - face[0].y) * (face[2].x - face[0].x) >= 0;
-        }
-        function translate(w) {
-            return new vector3(w.x, w.y, 0);
-        }
-        function draw(object, ctx, dx, dy) {
-            let mesh = add_z_depth(flatten(object));
-            if (z_depth) mesh.sort((a, b) => a.z_avg - b.z_avg);//sort by average face z value
-            if (hide_anim) hideAnim(mesh);
-            for (let i = 0; i < mesh.length; i++) {
-                ctx.beginPath();
-                ctx.moveTo(mesh[i][0].x + dx, mesh[i][0].y + dy);
-                for (let j = 1; j < mesh[i].length; j++) {
-                    ctx.lineTo(mesh[i][j].x + dx, mesh[i][j].y + dy);
-                }
-                ctx.closePath();
-                ctx.stroke();
-                ctx.fill();
-                if (randomColors) ctx.fillStyle = `rgba(${getRndInt(0, 255)},${getRndInt(0, 255)},${getRndInt(0, 255)},${getRndInt(5, 10) / 10})`;
-            }
-        }
-        function add_z_depth(mesh) {
-            mesh.forEach(face => {
-                face.z_avg = (face[0].z + face[1].z + face[2].z + face[3].z) / 4;
-            });
-            return mesh;
-        }
-        function flatten(object) {
-            let objectCount = object.length, faceCount, mesh = [];
-            if (face_culling) {
-                for (var i = 0; i < objectCount; i++) {
-                    faceCount = object[i].faces.length;
-                    for (var j = 0; j < faceCount; j++) {
-                        if (faceCulling(object[i].faces[j])) {
-                            mesh.push(object[i].faces[j]);
-                        }
-                    }
-                }
-            }
-            else {
-                for (var i = 0; i < objectCount; i++) {
-                    faceCount = object[i].faces.length;
-                    for (var j = 0; j < faceCount; j++) {
-                        mesh.push(object[i].faces[j]);
-                    }
-                }
-            }
-            return mesh;
-        }
-        function getRndInt(min, max) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-        function RotateQ(object, AngDeg, v3) {
-            const initialQ = new quaternion(1, 0, 0, 0);
-            var rotationalQ = AVtoQ(AngDeg * Math.PI / 180, v3);
-            Qvalue.innerHTML = rotationalQ;
-            var rotationalM = RotMatrix(MultiplyQ(initialQ, rotationalQ));
-            for (let i = 0; i < object.points.length; i++) {
-                object.points[i] = MultiplyMV(rotationalM, object.points[i]);
-            }
-            Pvalue.innerHTML = FormatText(object.points);
-        }
-        function AVtoQ(AngRad, v3) {
-            var w = Math.cos(AngRad / 2);
-            var s = Math.sin(AngRad / 2);
-            return new quaternion(w, v3.x * s, v3.y * s, v3.z * s);
-        }
-        function MultiplyMV(matrix3x3, vector3) {
-            let x = vector3.x * 1, y = vector3.y * 1, z = vector3.z * 1;
-            vector3.x = matrix3x3[0][0] * x + matrix3x3[0][1] * y + matrix3x3[0][2] * z;
-            vector3.y = matrix3x3[1][0] * x + matrix3x3[1][1] * y + matrix3x3[1][2] * z;
-            vector3.z = matrix3x3[2][0] * x + matrix3x3[2][1] * y + matrix3x3[2][2] * z;
-            return vector3;
-        }
-        function MultiplyQ(q1, q2) {
-            return new quaternion(
-                (q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z),
-                (q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y),
-                (q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x),
-                (q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w)
-            );
-        }
-        function FormatText(v) {
-            let out = "";
-            for (let i = 0; i < v.length; i++) {
-                if (v[i] !== Object(v[i])) {
-                    out += `${v[i].toFixed(5).padStart(10, ' ')}${i >= v.length - 1 ? '' : ','}`;
-                }
-                else {
-                    out += `${v[i].toString()}${i >= v.length - 1 ? '' : '\n'}`;
-                }
-            }
-            return out;
-        }
-        function RotMatrix(q) {
-            var x = [2 * (.5 - q.y * q.y - q.z * q.z), 2 * (q.x * q.y - q.w * q.z), 2 * (q.x * q.z + q.w * q.y)];
-            var y = [2 * (q.x * q.y + q.w * q.z), 2 * (.5 - q.x * q.x - q.z * q.z), 2 * (q.y * q.z - q.w * q.x)];
-            var z = [2 * (q.x * q.z - q.w * q.y), 2 * (q.y * q.z + q.w * q.x), 2 * (.5 - q.x * q.x - q.y * q.y)];
-            Mvalue.innerHTML = `${FormatText(x)}\n${FormatText(y)}\n${FormatText(z)}`;
-            return [x, y, z];
-        }
-        function normalize(vector) {
-            const ep1 = 1.001, ep2 = 0.999;
-            const isQuaternion = Object.hasOwn(vector, 'w');
-            let distance = vector.x * vector.x + vector.y * vector.y + vector.z * vector.z;
-            const normalised = isQuaternion ? new quaternion() : new vector3();
-            if (isQuaternion) { distance += vector.w * vector.w }
-            if (distance > ep1 || distance < ep2) {
-                if (distance != 0) {
-                    distance = Math.sqrt(distance);
-                    if (isQuaternion) normalised.w = vector.w / distance;
-                    normalised.x = vector.x / distance;
-                    normalised.y = vector.y / distance;
-                    normalised.z = vector.z / distance;
-
-                }
-            }
-            else {
-                if (isQuaternion) normalised.w = vector.w;
-                normalised.x = vector.x;
-                normalised.y = vector.y;
-                normalised.z = vector.z;
-            }
-            return normalised;
-        }
-        function hideAnim(mesh) {
-            let temp = frameCounter % mesh.length;
-            mesh.splice(temp, mesh.length);
-        }
-        const cubeCreator = (x, y, z, size) => new cube(new vector3(x * size, y * size, z * size), size);
-        function FigureCreator(cubeList, size) {
-            let mesh = [];
-            cubeList.forEach(cube => {
-                mesh.push(cubeCreator(cube[0], cube[1], cube[2], size));
-            });
-            return mesh;
-        }
-        function RotationWithKeyboardKeys(vector3) {
-            let temp = { w: keysPressed['w'] ? 1 : 0, a: keysPressed['a'] ? 1 : 0, s: keysPressed['s'] ? 1 : 0, d: keysPressed['d'] ? 1 : 0, q: keysPressed['q'] ? 1 : 0, e: keysPressed['e'] ? 1 : 0 };
-            if (temp.a || temp.d) vector3.y = -temp.a + temp.d;
-            if (temp.w || temp.s) vector3.x = -temp.s + temp.w;
-            if (temp.q || temp.e) vector3.z = -temp.q + temp.e;
-        }
-
-        //inicjalizacja
-
-
-        const ctx = document.getElementById('canvas').getContext("2d"),
-            Mvalue = document.getElementById("Mvalue"),
-            Pvalue = document.getElementById("Pvalue"),
-            Qvalue = document.getElementById("Qvalue"),
-            Vvalue = document.getElementById("Vvalue"),
-            Nvalue = document.getElementById("Nvalue"),
-            Tvalue = document.getElementById("Tvalue"),
-            stepBt = document.getElementById("step"),
-            scale = 50, dx = 250, dy = 250,
-            ThreeDimX = [[0, 0, 0], [1, 1, 1], [-1, -1, -1], [1, -1, 1], [-1, 1, 1],
-            [2, 2, 2], [-2, -2, -2], [2, -2, 2], [-2, 2, 2], [0, 0, 0], [1, 1, -1],
-            [-1, -1, 1], [1, -1, -1], [-1, 1, -1], [2, 2, -2], [-2, -2, 2], [2, -2, -2], [-2, 2, -2]];
-        const keysPressed = {};
-        let face_culling, continousAnimation, z_depth, hide_anim, randomColors,
-            opacity, vIn, vNm, thetaDeg, frameCounter, objects = [];
-        window.onload = window.requestAnimationFrame(init);
-        document.addEventListener('keydown', (event) => { keysPressed[event.key] = true; });
-        document.addEventListener('keyup', (event) => { delete keysPressed[event.key]; });
-
-        //init
-
-
-        function init() {
-            face_culling = true;
-            continousAnimation = false;
-            z_depth = true;
-            hide_anim = false;
-            randomColors = false;
-            vIn = new vector3(1, 0, 1);
-            vNm = normalize(vIn)
-            opacity = 0.9;
-            thetaDeg = 0.5;
-            frameCounter = 0;
-            ctx.strokeStyle = '#abb';
-            ctx.fillStyle = "white";
-            objects = objects.concat(FigureCreator(ThreeDimX, scale));
-            stepBt.addEventListener("click", function () { continousAnimation = !continousAnimation; });
-            draw(objects, ctx, dx, dy);
-            MainLoop();
-        }
-
-
-        // main
-
-
-        function MainLoop() {
-            if (continousAnimation) {
-                RotationWithKeyboardKeys(vIn);
-                vNm = normalize(vIn);
-                Vvalue.innerHTML = vIn;
-                Tvalue.innerHTML = thetaDeg;
-                Nvalue.innerHTML = vNm;
-                objects.forEach(element => {
-                    RotateQ(element, thetaDeg, vNm);
-                });
-                ctx.clearRect(0, 0, 500, 500);
-                ctx.fillStyle = `rgba(255,255,255, ${opacity})`;
-                draw(objects, ctx, dx, dy);
-                frameCounter += 1;
-            }
-            window.requestAnimationFrame(MainLoop);
-        }
-    </script>
-    <script>
-        let index = 0;
-        document.querySelectorAll('svg.dither').forEach((svg) => {
-            const baseColor1 = svg.getAttribute('data-color1');
-            const baseColor2 = svg.getAttribute('data-color2');
-            svg.querySelectorAll('rect').forEach((rect) => {
-                let color1 = rect.getAttribute('data-color1');
-                let color2 = rect.getAttribute('data-color2');
-
-                //use parent colors if not specified
-                if (!color1) color1 = baseColor1;
-                if (!color2) color2 = baseColor2;
-
-                // clone the original pattern
-                const url = rect.getAttribute('fill');
-                const patternName = url.substring(4, url.length - 1);
-                const pattern = document.querySelector(patternName).cloneNode(true);
-                pattern.id = `${pattern.id}-${index}`;
-                index = index + 1;
-
-                // set rect fill to match the new pattern id
-                rect.setAttribute('fill', `url(#${pattern.id})`);
-
-                // change colors in the cloned pattern
-                pattern.querySelectorAll('.rect-color-1').forEach(rect => rect.setAttribute('fill', color1));
-                pattern.querySelectorAll('.rect-color-2').forEach(rect => rect.setAttribute('fill', color2));
-
-                // add cloned pattern to the current svg
-                let defs = document.createElementNS("http://www.w3.org/2000/svg", 'defs');
-                defs.appendChild(pattern);
-                svg.appendChild(defs);
-            })
-        });
-    </script>
+    <script src="js/gradients.js"></script>
 </body>
 
 </html>
