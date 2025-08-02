@@ -191,3 +191,19 @@ html {
       var(--c1) 0 25%,var(--c2) 0 50%);
   background-size: var(--s) calc(4*var(--s)/3);
 }
+a:visited {
+  color: blue;
+}
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: fade 0.3s ease both;
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
