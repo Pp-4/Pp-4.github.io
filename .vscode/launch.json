@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Build only",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/src/sitebuilder/sitebuilder.csproj",
+            "launchConfigurationId": "TargetFramework=;sitebuilder"
+        },
+        {
+            "name": "Build & Launch (Firefox)",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "file": "${workspaceFolder}/output/index.html",
+            "preLaunchTask": "Build Static Webpage"
+        },
+        {
+            "name": "Build & Launch (Chrome)",
+            "type": "chrome",
+            "request": "launch",
+            "file": "${workspaceFolder}/output/index.html",
+            "preLaunchTask": "Build Static Webpage"
+        }
+    ]
+}
