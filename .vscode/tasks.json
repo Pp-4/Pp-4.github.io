@@ -10,11 +10,11 @@
                 "--project",
                 "./src"
             ],
-            "problemMatcher": [],
+            "problemMatcher": "$msCompile",
             "group": {
                 "kind": "build",
                 "isDefault": true
-            }
+            },
         },
         {
             "label": "Watch Static Webpage",
@@ -28,7 +28,7 @@
                 "--watch"
             ],
             "isBackground": true,
-            "problemMatcher": []
+            "problemMatcher": "$msCompile"
         }
     ]
 }

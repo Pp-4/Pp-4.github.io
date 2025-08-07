@@ -3,10 +3,16 @@
     "configurations": [
         {
             "name": "Build only",
-            "type": "dotnet",
+            "type": "coreclr",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/src/sitebuilder/sitebuilder.csproj",
-            "launchConfigurationId": "TargetFramework=;sitebuilder"
+            "program": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/src/sitebuilder.csproj"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
         },
         {
             "name": "Build & Launch (Firefox)",
@@ -14,7 +20,7 @@
             "request": "launch",
             "reAttach": true,
             "file": "${workspaceFolder}/output/index.html",
-            "preLaunchTask": "Build Static Webpage"
+            "preLaunchTask": "Build Static Webpage",
         },
         {
             "name": "Build & Launch (Chrome)",

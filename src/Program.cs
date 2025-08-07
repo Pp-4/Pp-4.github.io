@@ -1,12 +1,62 @@
-﻿using static System.Console;
+﻿using System.IO;
+using System;
+using System.Runtime.CompilerServices;
 namespace sitebuilder
 {
     class Program
     {
         static void Main(string[] args)
         {
-            WriteLine("Hello, World!");
-            Debug.WriteLine("asdad");
+            var contentDir = Path.Combine("pages");
+            var templatePath = Path.Combine("ere/templates", "template.html");
+            var outputDir = Path.Combine("output");
+
+            Console.WriteLine("Building static site...");
+
+            if (!File.Exists(templatePath))
+            {
+                Console.WriteLine(templatePath);
+                Console.WriteLine(System.AppDomain.CurrentDomain.BaseDirectory);
+                Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
+                Console.WriteLine("Missing template file.");
+                return;
+            }
+
+            var template = File.ReadAllText(templatePath);
+
+            // Clean output folder
+            if (Directory.Exists(outputDir))
+                Directory.Delete(outputDir, recursive: true);
+            Directory.CreateDirectory(outputDir);
+
+            // Copy assets
+            var assetSource = "assets";
+            var assetTarget = Path.Combine(outputDir, "assets");
+            if (Directory.Exists(assetSource))
+                CopyDirectory(assetSource, assetTarget);
+
+            // Build each HTML file
+            foreach (var file in Directory.GetFiles(contentDir, "*.html"))
+            {
+                var filename = Path.GetFileName(file);
+                var content = File.ReadAllText(file);
+                var fullPage = template.Replace("{{content}}", content);
+                File.WriteAllText(Path.Combine(outputDir, filename), fullPage);
+                Console.WriteLine($"Built: {filename}");
+            }
+
+            Console.WriteLine("Build complete.");
+            return;
         }
+        static void CopyDirectory(string sourceDir, string targetDir)
+        {
+            Directory.CreateDirectory(targetDir);
+            foreach (var file in Directory.GetFiles(sourceDir))
+            {
+                var targetFile = Path.Combine(targetDir, Path.GetFileName(file));
+                File.Copy(file, targetFile);
+            }
+        }
+
     }
 }
