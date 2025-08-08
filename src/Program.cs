@@ -4,44 +4,33 @@ namespace sitebuilder
 {
     class Program
     {
+        const string PAGES_PATH = "pages";
+        const string ASSETS_PATH = "assets";
+        const string TEMPLATE_PATH = "templates";
+        const string OUTPUT_PATTH = "output";
         static void Main(string[] args)
         {
-            var contentDir = Path.Combine("pages");
-            var templatePath = Path.Combine("templates", "template.html");
-            var outputDir = Path.Combine("output");
-
             Console.WriteLine("Building static site...");
 
-            if (!File.Exists(templatePath))
+            // Find template file
+            var templateLocation = Path.Combine(TEMPLATE_PATH, "template.html");
+            if (!File.Exists(templateLocation))
             {
-                Console.WriteLine(templatePath);
-                Console.WriteLine($"base directory: {AppDomain.CurrentDomain.BaseDirectory}");
-                Console.WriteLine($"current working directory: {Directory.GetCurrentDirectory()}");
-                Console.WriteLine("Missing template file.");
+                Console.WriteLine($"Missing template file at {Directory.GetCurrentDirectory}/{templateLocation}.");
                 return;
             }
-            var template = File.ReadAllText(templatePath);
+            var template = File.ReadAllText(templateLocation);
 
             // Clean output folder
-            if (Directory.Exists(outputDir))
-                Directory.Delete(outputDir, recursive: true);
-            Directory.CreateDirectory(outputDir);
+            if (Directory.Exists(OUTPUT_PATTH)) Directory.Delete(OUTPUT_PATTH, recursive: true);
+            Directory.CreateDirectory(OUTPUT_PATTH);
 
             // Copy assets
-            var assetSource = "assets";
-            var assetTarget = Path.Combine(outputDir, "assets");
-            if (Directory.Exists(assetSource))
-                CopyDirectory(assetSource, assetTarget);
+            var assetTarget = Path.Combine(OUTPUT_PATTH, ASSETS_PATH);
+            if (Directory.Exists(ASSETS_PATH)) CopyDirectory(ASSETS_PATH, assetTarget);
 
             // Build each HTML file
-            foreach (var file in Directory.GetFiles(contentDir, "*.html"))
-            {
-                var filename = Path.GetFileName(file);
-                var content = File.ReadAllText(file);
-                var fullPage = template.Replace("{{content}}", content);
-                File.WriteAllText(Path.Combine(outputDir, filename), fullPage);
-                Console.WriteLine($"Built: {filename}");
-            }
+            BuildPages(template);
 
             Console.WriteLine("Build complete.");
             return;
@@ -57,6 +46,30 @@ namespace sitebuilder
             foreach (var directtory in Directory.GetDirectories(sourceDir))
             {
                 CopyDirectory(directtory, targetDir);
+            }
+        }
+        static void BuildPages(string template)
+        {
+            Directory.CreateDirectory(Path.Combine(OUTPUT_PATTH, "pages"));
+            foreach (var file in Directory.GetFiles(PAGES_PATH, "*.html"))
+            {
+                var filename = Path.GetFileName(file);
+                var content = File.ReadAllText(file);
+                if (filename == "index.html")
+                {
+                    var fullPage = template.Replace("{{content}}", content);
+                    File.WriteAllText(Path.Combine(OUTPUT_PATTH, filename), fullPage);
+                }
+                else
+                {
+                    var fullPage = template
+                        .Replace("assets/style.css", "../assets/style.css")
+                        .Replace("assets/style.js", "../assets/style.js")
+                        .Replace("assets/router.js", "../assets/router.js")
+                        .Replace("{{content}}", content);
+                    File.WriteAllText(Path.Combine(OUTPUT_PATTH, "pages", filename), fullPage);
+                }
+                Console.WriteLine($"Built: {filename}");
             }
         }
     }
