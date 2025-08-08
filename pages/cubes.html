@@ -1,50 +1,47 @@
-<div class="main-section" style="display: flex; flex-wrap: wrap; gap:0 10%; justify-content: center;">
-    <canvas id="canvas" width="500" height="500"></canvas>
-    <div class="information">
-        <pre><label for="Vvalue">Input vector (x,y,z,</label><label for="Tvalue">theta)</label></pre>
-        <textarea id="Vvalue" rows=1 cols="32" readonly></textarea>
-        <textarea id="Tvalue" rows=1 cols="3" readonly></textarea>
-        <pre><label for="Nvalue">Normalized vector</label></pre>
-        <textarea id="Nvalue" rows=1 cols="36" readonly></textarea>
-        <pre><label for="Qvalue">Quaternion (w,x,y,z)</label></pre>
-        <textarea id="Qvalue" rows=1 cols="36" readonly></textarea>
-        <pre><label for="Mvalue">Rotation matrix</label></pre>
-        <textarea id="Mvalue" rows=3 cols="36" readonly></textarea>
-        <pre><label for="Pvalue">Vertices of some cube</label></pre>
-        <textarea id="Pvalue" rows=8 cols="36" readonly></textarea>
-    </div>
-    <div class="controls">
-        <div style="display: flex; flex-direction: column;">
-            <button aria-label="Play/pause" id="step">► ||</button>
-            <div style="display: flex; flex-direction: row;">
-                <button class="nav" id="b1" aria-label="Top left" onclick="vIn = new vector3(1, -1, 0)">|\</button>
-                <button class="nav" id="b2" aria-label="Top" onclick="vIn = new vector3(1, 0, 0)">/\</button>
-                <button class="nav" id="b3" aria-label="Top right" onclick="vIn = new vector3(1, 1, 0)">/|</button>
-            </div>
-            <div style="display: flex; flex-direction: row;">
-                <button class="nav" id="b4" aria-label="Left" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
-                <button class="nav" id="b5" aria-label="Switch speed" onclick="thetaDeg = thetaDeg>0?0:0.5">0</button>
-                <button class="nav" id="b6" aria-label="Right" onclick="vIn = new vector3(0, 1, 0)">&gt;</button>
-            </div>
-            <div style="display: flex; flex-direction: row;">
-                <button class="nav" id="b7" aria-label="Bottom right" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
-                <button class="nav" id="b8" aria-label="Bottom" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
-                <button class="nav" id="b9" aria-label="Bottom Left"
-                    onclick="vIn = new vector3(-1, 1, 0)">\|</button><br>
-            </div>
-            <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                <button class="nav" id="b10" aria-label="Rotate Left" onclick="vIn = new vector3(0, 0, -1)">(</button>
-                <button class="nav" id="b11" aria-label="Rotate right" onclick="vIn = new vector3(0, 0, 1)">)</button>
-            </div>
+<canvas id="canvas" width="500" height="500"></canvas>
+<div class="information">
+    <pre><label for="Vvalue">Input vector (x,y,z,</label><label for="Tvalue">theta)</label></pre>
+    <textarea id="Vvalue" rows=1 cols="32" readonly></textarea>
+    <textarea id="Tvalue" rows=1 cols="3" readonly></textarea>
+    <pre><label for="Nvalue">Normalized vector</label></pre>
+    <textarea id="Nvalue" rows=1 cols="36" readonly></textarea>
+    <pre><label for="Qvalue">Quaternion (w,x,y,z)</label></pre>
+    <textarea id="Qvalue" rows=1 cols="36" readonly></textarea>
+    <pre><label for="Mvalue">Rotation matrix</label></pre>
+    <textarea id="Mvalue" rows=3 cols="36" readonly></textarea>
+    <pre><label for="Pvalue">Vertices of some cube</label></pre>
+    <textarea id="Pvalue" rows=8 cols="36" readonly></textarea>
+</div>
+<div class="controls">
+    <div style="display: flex; flex-direction: column;">
+        <button aria-label="Play/pause" id="step">► ||</button>
+        <div style="display: flex; flex-direction: row;">
+            <button class="nav" id="b1" aria-label="Top left" onclick="vIn = new vector3(1, -1, 0)">|\</button>
+            <button class="nav" id="b2" aria-label="Top" onclick="vIn = new vector3(1, 0, 0)">/\</button>
+            <button class="nav" id="b3" aria-label="Top right" onclick="vIn = new vector3(1, 1, 0)">/|</button>
         </div>
-        <br>
-        <pre>    <label for="face_culling">Show back faces</label> <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
+        <div style="display: flex; flex-direction: row;">
+            <button class="nav" id="b4" aria-label="Left" onclick="vIn = new vector3(0, -1, 0)">&lt;</button>
+            <button class="nav" id="b5" aria-label="Switch speed" onclick="thetaDeg = thetaDeg>0?0:0.5">0</button>
+            <button class="nav" id="b6" aria-label="Right" onclick="vIn = new vector3(0, 1, 0)">&gt;</button>
+        </div>
+        <div style="display: flex; flex-direction: row;">
+            <button class="nav" id="b7" aria-label="Bottom right" onclick="vIn = new vector3(-1, -1, 0)">|/</button>
+            <button class="nav" id="b8" aria-label="Bottom" onclick="vIn = new vector3(-1, 0, 0)">\/</button>
+            <button class="nav" id="b9" aria-label="Bottom Left" onclick="vIn = new vector3(-1, 1, 0)">\|</button><br>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+            <button class="nav" id="b10" aria-label="Rotate Left" onclick="vIn = new vector3(0, 0, -1)">(</button>
+            <button class="nav" id="b11" aria-label="Rotate right" onclick="vIn = new vector3(0, 0, 1)">)</button>
+        </div>
+    </div>
+    <br>
+    <pre>    <label for="face_culling">Show back faces</label> <input id="face_culling" type="checkbox" onclick="face_culling = !face_culling">
     <label for="z_depth">Sort by Z depth</label> <input id="z_depth" type="checkbox" onclick="z_depth = !z_depth" checked>
     <label for="hide_anim">Fade Animation</label>  <input  id="hide_anim" type="checkbox" onclick="hide_anim = !hide_anim">
     
     <label for="opacity">Opacity (0-1)</label>
     <input id="opacity" type="range" min = "0", max="1" value="0.9" step="0.05" oninput="opacity = this.value"></pre>
-    </div>
 </div>
 <script>
     "use strict";

@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System;
-using System.Runtime.CompilerServices;
 namespace sitebuilder
 {
     class Program
@@ -8,7 +7,7 @@ namespace sitebuilder
         static void Main(string[] args)
         {
             var contentDir = Path.Combine("pages");
-            var templatePath = Path.Combine("ere/templates", "template.html");
+            var templatePath = Path.Combine("templates", "template.html");
             var outputDir = Path.Combine("output");
 
             Console.WriteLine("Building static site...");
@@ -16,12 +15,11 @@ namespace sitebuilder
             if (!File.Exists(templatePath))
             {
                 Console.WriteLine(templatePath);
-                Console.WriteLine(System.AppDomain.CurrentDomain.BaseDirectory);
-                Console.WriteLine(System.IO.Directory.GetCurrentDirectory());
+                Console.WriteLine($"base directory: {AppDomain.CurrentDomain.BaseDirectory}");
+                Console.WriteLine($"current working directory: {Directory.GetCurrentDirectory()}");
                 Console.WriteLine("Missing template file.");
                 return;
             }
-
             var template = File.ReadAllText(templatePath);
 
             // Clean output folder
@@ -56,7 +54,10 @@ namespace sitebuilder
                 var targetFile = Path.Combine(targetDir, Path.GetFileName(file));
                 File.Copy(file, targetFile);
             }
+            foreach (var directtory in Directory.GetDirectories(sourceDir))
+            {
+                CopyDirectory(directtory, targetDir);
+            }
         }
-
     }
 }

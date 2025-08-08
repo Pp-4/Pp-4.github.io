@@ -1,133 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Color Picker with Sliders</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    #controls { margin-top: 10px; }
-    #controls label { display: block; margin: 5px 0; }
-    #preview {
-      margin-top: 10px;
-      width: 200px; height: 50px;
-      border: 1px solid #000;
-    }
-  </style>
-</head>
-<body>
+<style>
+  #controls {
+    margin-top: 10px;
+  }
 
-  <canvas id="win1-picker" width="200" height="200" style="border:1px solid #000;"></canvas>
+  #controls label {
+    display: block;
+    margin: 5px 0;
+  }
 
-  <div id="controls">
-    <label>
-      Tint (%): 
-      <input type="range" id="tint-slider" min="0" max="100" value="30">
-      <span id="tint-val">30</span>%
-    </label>
-    <label>
-      Alpha: 
-      <input type="range" id="alpha-slider" min="0" max="1" step="0.01" value="1">
-      <span id="alpha-val">1.00</span>
-    </label>
-  </div>
+  #preview {
+    margin-top: 10px;
+    width: 200px;
+    height: 50px;
+    border: 1px solid #000;
+  }
+</style>
 
-  <div id="preview"></div>
+<canvas id="win1-picker" width="200" height="200" style="border:1px solid #000; height: 200px; margin:  20px;"></canvas>
 
-  <script>
-    const win1Palette = [
-      "#000000","#000080","#008000","#008080",
-      "#800000","#800080","#808000","#C0C0C0",
-      "#808080","#0000FF","#00FF00","#00FFFF",
-      "#FF0000","#FF00FF","#FFFF00","#FFFFFF"
-    ];
+<div id="controls" style="margin: 20px;">
+  <label>
+    Tint (%):
+    <input type="range" id="tint-slider" min="0" max="100" value="30">
+    <span id="tint-val">30</span>%
+  </label>
+  <label>
+    Alpha:
+    <input type="range" id="alpha-slider" min="0" max="1" step="0.01" value="1">
+    <span id="alpha-val">1.00</span>
+  </label>
+</div>
 
-    function lightenColor(hex, percent) {
-      const num = parseInt(hex.slice(1),16);
-      let r = (num>>16)&0xFF, g = (num>>8)&0xFF, b = num&0xFF;
-      r = Math.min(255, Math.floor(r + (255 - r) * percent));
-      g = Math.min(255, Math.floor(g + (255 - g) * percent));
-      b = Math.min(255, Math.floor(b + (255 - b) * percent));
-      return `rgb(${r},${g},${b})`;
-    }
+<div id="preview"></div>
 
-    // 3️⃣ Set up canvas & variables
-    const canvas = document.getElementById('win1-picker'),
-          ctx    = canvas.getContext('2d');
-    const cols = 4, rows = 4,
-          cellW = canvas.width/cols,
-          cellH = canvas.height/rows;
-    let selectedColor = win1Palette[0]; // default
-    let tintPct = 0.3, alpha = 1;
+<script>
+  const win1Palette = [
+    "#000000", "#000080", "#008000", "#008080",
+    "#800000", "#800080", "#808000", "#C0C0C0",
+    "#808080", "#0000FF", "#00FF00", "#00FFFF",
+    "#FF0000", "#FF00FF", "#FFFF00", "#FFFFFF"
+  ];
 
-    // 4️⃣ Draw the 4×4 gradient grid
-    function drawGrid() {
-      win1Palette.forEach((hex,i)=>{
-        const row = Math.floor(i/cols), col = i%cols;
-        const x = col*cellW, y = row*cellH;
+  function lightenColor(hex, percent) {
+    const num = parseInt(hex.slice(1), 16);
+    let r = (num >> 16) & 0xFF, g = (num >> 8) & 0xFF, b = num & 0xFF;
+    r = Math.min(255, Math.floor(r + (255 - r) * percent));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent));
+    return `rgb(${r},${g},${b})`;
+  }
 
-        const grad = ctx.createLinearGradient(x,y,x+cellW,y);
-        grad.addColorStop(0, lightenColor(hex, tintPct));
-        grad.addColorStop(1, hex);
+  //Set up canvas & variables
+  const canvas = document.getElementById('win1-picker'),
+    ctx = canvas.getContext('2d');
+  const cols = 4, rows = 4,
+    cellW = canvas.width / cols,
+    cellH = canvas.height / rows;
+  let selectedColor = win1Palette[0]; // default
+  let tintPct = 0.3, alpha = 1;
 
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = grad;
-        ctx.fillRect(x,y,cellW,cellH);
+  //Draw the 4×4 gradient grid
+  function drawGrid() {
+    win1Palette.forEach((hex, i) => {
+      const row = Math.floor(i / cols), col = i % cols;
+      const x = col * cellW, y = row * cellH;
 
-        // old‑school beveled border
-        ctx.strokeStyle = '#FFF';
-        ctx.beginPath();
-        ctx.moveTo(x, y+cellH); ctx.lineTo(x, y); ctx.lineTo(x+cellW, y);
-        ctx.stroke();
-        ctx.strokeStyle = '#808080';
-        ctx.beginPath();
-        ctx.moveTo(x+cellW, y); ctx.lineTo(x+cellW, y+cellH); ctx.lineTo(x, y+cellH);
-        ctx.stroke();
-      });
-    }
+      const grad = ctx.createLinearGradient(x, y, x + cellW, y);
+      grad.addColorStop(0, lightenColor(hex, tintPct));
+      grad.addColorStop(1, hex);
 
-    // 5️⃣ Preview renderer
-    const preview = document.getElementById('preview');
-    function updatePreview() {
-      const light = lightenColor(selectedColor, tintPct);
-      preview.style.background = 
-        `linear-gradient(to right, ${light}, ${selectedColor})`;
-      preview.style.opacity = alpha;
-    }
-
-    // 6️⃣ Wire up canvas clicks to pick a color
-    canvas.addEventListener('click', e=>{
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX-rect.left, y = e.clientY-rect.top;
-      const col = Math.floor(x/cellW), row = Math.floor(y/cellH);
-      const idx = row*cols + col;
-      selectedColor = win1Palette[idx];
-      updatePreview();
-      console.log("Picked base color:", selectedColor);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, cellW, cellH);
+      ctx.strokeStyle = '#FFF';
+      ctx.beginPath();
+      ctx.moveTo(x, y + cellH); ctx.lineTo(x, y); ctx.lineTo(x + cellW, y);
+      ctx.stroke();
+      ctx.strokeStyle = '#808080';
+      ctx.beginPath();
+      ctx.moveTo(x + cellW, y); ctx.lineTo(x + cellW, y + cellH); ctx.lineTo(x, y + cellH);
+      ctx.stroke();
     });
+  }
+  const preview = document.getElementById('preview');
+  function updatePreview() {
+    const light = lightenColor(selectedColor, tintPct);
+    preview.style.background =
+      `linear-gradient(to right, ${light}, ${selectedColor})`;
+    preview.style.opacity = alpha;
+  }
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const col = Math.floor(x / cellW), row = Math.floor(y / cellH);
+    const idx = row * cols + col;
+    selectedColor = win1Palette[idx];
+    updatePreview();
+    console.log("Picked base color:", selectedColor);
+  });
+  const tintSlider = document.getElementById('tint-slider'),
+    tintVal = document.getElementById('tint-val'),
+    alphaSlider = document.getElementById('alpha-slider'),
+    alphaVal = document.getElementById('alpha-val');
 
-    // 7️⃣ Wire up sliders
-    const tintSlider  = document.getElementById('tint-slider'),
-          tintVal     = document.getElementById('tint-val'),
-          alphaSlider = document.getElementById('alpha-slider'),
-          alphaVal    = document.getElementById('alpha-val');
-
-    tintSlider.addEventListener('input', ()=>{
-      tintPct = tintSlider.value/100;
-      tintVal.textContent = tintSlider.value;
-      drawGrid();
-      updatePreview();
-    });
-
-    alphaSlider.addEventListener('input', ()=>{
-      alpha = parseFloat(alphaSlider.value);
-      alphaVal.textContent = alpha.toFixed(2);
-      updatePreview();
-    });
-
-    // 8️⃣ Initial render
+  tintSlider.addEventListener('input', () => {
+    tintPct = tintSlider.value / 100;
+    tintVal.textContent = tintSlider.value;
     drawGrid();
     updatePreview();
-  </script>
+  });
 
-</body>
-</html>
+  alphaSlider.addEventListener('input', () => {
+    alpha = parseFloat(alphaSlider.value);
+    alphaVal.textContent = alpha.toFixed(2);
+    updatePreview();
+  });
+  drawGrid();
+  updatePreview();
+</script>
