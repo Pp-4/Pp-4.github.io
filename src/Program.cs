@@ -51,6 +51,7 @@ namespace sitebuilder
         static void BuildPages(string template)
         {
             Directory.CreateDirectory(Path.Combine(OUTPUT_PATTH, "pages"));
+            File.Create(Path.Combine(OUTPUT_PATTH, ".exist"));
             foreach (var file in Directory.GetFiles(PAGES_PATH, "*.html"))
             {
                 var filename = Path.GetFileName(file);
