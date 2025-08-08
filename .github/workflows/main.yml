@@ -32,4 +32,11 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: output
+        destination_dir: . 
         enable_jekyll: false
+    - name: Verify gh-pages content
+      run: |
+        echo "Cloning gh-pages branch to verify content..."
+        git clone -b gh-pages --depth=1 https://github.com/Pp-4/Pp-4.github.io.git verify-gh-pages
+        cd verify-gh-pages
+        ls -R
