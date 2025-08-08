@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        Generic github page
+    </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="Page with Pp4's various projects. Main page.">
+    <link rel="stylesheet" type="text/css" href="../assets/style.css">
+</head>
+
+<body>
+
+    <svg class="pattern-holder" style="position: absolute; height: 0; width: 0;">
+        <defs>
+            <pattern id="dith-0" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="8" height="8" fill="black" />
+            </pattern>
+            <pattern id="dith-1" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="8" height="8" fill="black" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="5" y="5" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-2" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="4" height="4" fill="black" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-3" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="4" height="4" fill="black" />
+                <rect class="rect-color-2" x="0" y="1" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="2" y="3" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-4" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="2" height="2" fill="black" />
+                <rect class="rect-color-2" x="0" y="1" width="1" height="1" fill="white" />
+            </pattern>
+            <pattern id="dith-5" x="0" y="0" width="2" height="2" patternUnits="userSpaceOnUse">
+                <rect class="rect-color-1" x="0" y="0" width="2" height="2" fill="black" />
+                <rect class="rect-color-2" x="0" y="0" width="1" height="1" fill="white" />
+                <rect class="rect-color-2" x="1" y="1" width="1" height="1" fill="white" />
+            </pattern>
+            <g id="icon" color="var(--blaaack)">
+                <rect x="1" y="1" width="9" height="2" fill="currentcolor" />
+                <rect x="1" y="5" width="9" height="2" fill="currentcolor" />
+                <rect x="1" y="9" width="9" height="2" fill="currentcolor" />
+            </g>
+        </defs>
+    </svg>
+    <div class="window">
+        <header class="title-bar">
+            <div class="title-bar-icon">
+                <svg viewBox="0 0 11 12" style="border-right: 1px solid;">
+                    <use href="#icon" />
+                </svg>
+            </div>
+            <span class="title-bar-title">
+                Hello World - I'm hosted with GitHub Pages.
+            </span>
+            <div class="title-bar-icon">
+                <svg viewBox="0 0 11 12" style="border-left: 1px solid;">
+                    <use href="#icon" />
+                </svg>
+            </div>
+        </header>
+        <div class="main-section">
+            <style>
+  #controls {
+    margin-top: 10px;
+  }
+
+  #controls label {
+    display: block;
+    margin: 5px 0;
+  }
+
+  #preview {
+    margin-top: 10px;
+    width: 200px;
+    height: 50px;
+    border: 1px solid #000;
+  }
+</style>
+
+<canvas id="win1-picker" width="200" height="200" style="border:1px solid #000; height: 200px; margin:  20px;"></canvas>
+
+<div id="controls" style="margin: 20px;">
+  <label>
+    Tint (%):
+    <input type="range" id="tint-slider" min="0" max="100" value="30">
+    <span id="tint-val">30</span>%
+  </label>
+  <label>
+    Alpha:
+    <input type="range" id="alpha-slider" min="0" max="1" step="0.01" value="1">
+    <span id="alpha-val">1.00</span>
+  </label>
+</div>
+
+<div id="preview"></div>
+
+<script>
+  const win1Palette = [
+    "#000000", "#000080", "#008000", "#008080",
+    "#800000", "#800080", "#808000", "#C0C0C0",
+    "#808080", "#0000FF", "#00FF00", "#00FFFF",
+    "#FF0000", "#FF00FF", "#FFFF00", "#FFFFFF"
+  ];
+
+  function lightenColor(hex, percent) {
+    const num = parseInt(hex.slice(1), 16);
+    let r = (num >> 16) & 0xFF, g = (num >> 8) & 0xFF, b = num & 0xFF;
+    r = Math.min(255, Math.floor(r + (255 - r) * percent));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent));
+    return `rgb(${r},${g},${b})`;
+  }
+
+  //Set up canvas & variables
+  const canvas = document.getElementById('win1-picker'),
+    ctx = canvas.getContext('2d');
+  const cols = 4, rows = 4,
+    cellW = canvas.width / cols,
+    cellH = canvas.height / rows;
+  let selectedColor = win1Palette[0]; // default
+  let tintPct = 0.3, alpha = 1;
+
+  //Draw the 4×4 gradient grid
+  function drawGrid() {
+    win1Palette.forEach((hex, i) => {
+      const row = Math.floor(i / cols), col = i % cols;
+      const x = col * cellW, y = row * cellH;
+
+      const grad = ctx.createLinearGradient(x, y, x + cellW, y);
+      grad.addColorStop(0, lightenColor(hex, tintPct));
+      grad.addColorStop(1, hex);
+
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, cellW, cellH);
+      ctx.strokeStyle = '#FFF';
+      ctx.beginPath();
+      ctx.moveTo(x, y + cellH); ctx.lineTo(x, y); ctx.lineTo(x + cellW, y);
+      ctx.stroke();
+      ctx.strokeStyle = '#808080';
+      ctx.beginPath();
+      ctx.moveTo(x + cellW, y); ctx.lineTo(x + cellW, y + cellH); ctx.lineTo(x, y + cellH);
+      ctx.stroke();
+    });
+  }
+  const preview = document.getElementById('preview');
+  function updatePreview() {
+    const light = lightenColor(selectedColor, tintPct);
+    preview.style.background =
+      `linear-gradient(to right, ${light}, ${selectedColor})`;
+    preview.style.opacity = alpha;
+  }
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const col = Math.floor(x / cellW), row = Math.floor(y / cellH);
+    const idx = row * cols + col;
+    selectedColor = win1Palette[idx];
+    updatePreview();
+    console.log("Picked base color:", selectedColor);
+  });
+  const tintSlider = document.getElementById('tint-slider'),
+    tintVal = document.getElementById('tint-val'),
+    alphaSlider = document.getElementById('alpha-slider'),
+    alphaVal = document.getElementById('alpha-val');
+
+  tintSlider.addEventListener('input', () => {
+    tintPct = tintSlider.value / 100;
+    tintVal.textContent = tintSlider.value;
+    drawGrid();
+    updatePreview();
+  });
+
+  alphaSlider.addEventListener('input', () => {
+    alpha = parseFloat(alphaSlider.value);
+    alphaVal.textContent = alpha.toFixed(2);
+    updatePreview();
+  });
+  drawGrid();
+  updatePreview();
+</script>
+        </div>
+        <footer class="bottom-bar">
+            <svg class="dither" width="100%" height="100%" style="position: relative; display: block;"
+                data-color1="var(--greeeen)" data-color2="var(--cyanish)">
+                <rect x="0" y="0" width="100%" height="100%" fill="url(#dith-4)"></rect>
+            </svg>
+        </footer>
+    </div>
+    <script src="../assets/style.js"></script>
+    <script src="../assets/router.js"></script>
+</body>
+
+</html>
