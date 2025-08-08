@@ -22,11 +22,10 @@ jobs:
         dotnet-version: '9.0.x'
 
     - name: Build static site
-      run: |
-        dotnet run --project ./src
-        mkdir -p output
-        mv *.html output/
-        mv assets output/
+      run: dotnet run --project ./src
+
+    - name: Dump filesystem
+      run: ls -R .
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
